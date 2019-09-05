@@ -680,8 +680,7 @@ public class JsonRpc2_0Web3j implements Web3j {
     }
 
     @Override
-    public Flowable<Log> ethLogFlowable(
-            network.matic.maticj.core.protocol.core.methods.request.EthFilter ethFilter) {
+    public Flowable<Log> ethLogFlowable(network.matic.maticj.core.protocol.core.methods.request.EthFilter ethFilter) {
         return web3jRx.ethLogFlowable(ethFilter, blockTime);
     }
 

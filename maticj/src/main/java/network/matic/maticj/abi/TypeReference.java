@@ -124,7 +124,8 @@ public abstract class TypeReference<T extends network.matic.maticj.abi.datatypes
                     "getAtomicTypeClass does not work with array types."
                             + " See makeTypeReference()");
         } else {
-            return AbiTypes.getType(solidityType, primitives);
+//            return AbiTypes.getType(solidityType, primitives);
+            return AbiTypes.getType(solidityType);
         }
     }
 

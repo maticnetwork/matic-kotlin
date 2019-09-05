@@ -215,7 +215,7 @@ public class DepositManager extends Contract {
         final network.matic.maticj.abi.datatypes.Function function = new network.matic.maticj.abi.datatypes.Function(FUNC_DEPOSITS, 
                 Arrays.<Type>asList(new network.matic.maticj.abi.datatypes.generated.Uint256(param0)), 
                 Arrays.<TypeReference<?>>asList(new TypeReference<Uint256>() {}, new TypeReference<Address>() {}, new TypeReference<Address>() {}, new TypeReference<Uint256>() {}, new TypeReference<Uint256>() {}));
-        return new RemoteCall<Tuple5<BigInteger, String, String, BigInteger, BigInteger>>(function,
+        return new RemoteCall<Tuple5<BigInteger, String, String, BigInteger, BigInteger>>(
                 new Callable<Tuple5<BigInteger, String, String, BigInteger, BigInteger>>() {
                     @Override
                     public Tuple5<BigInteger, String, String, BigInteger, BigInteger> call() throws Exception {
@@ -440,7 +440,7 @@ public class DepositManager extends Contract {
         final network.matic.maticj.abi.datatypes.Function function = new network.matic.maticj.abi.datatypes.Function(FUNC_DEPOSITBLOCK, 
                 Arrays.<Type>asList(new network.matic.maticj.abi.datatypes.generated.Uint256(_depositCount)), 
                 Arrays.<TypeReference<?>>asList(new TypeReference<Uint256>() {}, new TypeReference<Address>() {}, new TypeReference<Address>() {}, new TypeReference<Uint256>() {}, new TypeReference<Uint256>() {}));
-        return new RemoteCall<Tuple5<BigInteger, String, String, BigInteger, BigInteger>>(function,
+        return new RemoteCall<Tuple5<BigInteger, String, String, BigInteger, BigInteger>>(
                 new Callable<Tuple5<BigInteger, String, String, BigInteger, BigInteger>>() {
                     @Override
                     public Tuple5<BigInteger, String, String, BigInteger, BigInteger> call() throws Exception {

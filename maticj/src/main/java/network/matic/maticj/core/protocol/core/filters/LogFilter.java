@@ -38,7 +38,7 @@ public class LogFilter extends Filter<Log> {
     }
 
     @Override
-    EthFilter sendRequest() throws IOException {
+    network.matic.maticj.core.protocol.core.methods.response.EthFilter sendRequest() throws IOException {
         return web3j.ethNewFilter(ethFilter).send();
     }
 

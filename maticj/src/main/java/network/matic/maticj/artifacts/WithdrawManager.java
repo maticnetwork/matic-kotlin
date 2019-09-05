@@ -33,7 +33,6 @@ import network.matic.maticj.core.protocol.core.RemoteCall;
 import network.matic.maticj.core.protocol.core.methods.response.Log;
 import network.matic.maticj.tuples.generated.Tuple2;
 import network.matic.maticj.tuples.generated.Tuple4;
-import network.matic.maticj.tuples.generated.Tuple5;
 
 
 /**
@@ -168,7 +167,7 @@ public class WithdrawManager extends Contract {
         final network.matic.maticj.abi.datatypes.Function function = new network.matic.maticj.abi.datatypes.Function(FUNC_EXITS, 
                 Arrays.<Type>asList(new network.matic.maticj.abi.datatypes.generated.Uint256(param0)), 
                 Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}, new TypeReference<Address>() {}, new TypeReference<Uint256>() {}, new TypeReference<Bool>() {}));
-        return new RemoteCall<Tuple4<String, String, BigInteger, Boolean>>(function,
+        return new RemoteCall<Tuple4<String, String, BigInteger, Boolean>>(
                 new Callable<Tuple4<String, String, BigInteger, Boolean>>() {
                     @Override
                     public Tuple4<String, String, BigInteger, Boolean> call() throws Exception {
@@ -222,7 +221,7 @@ public class WithdrawManager extends Contract {
         final network.matic.maticj.abi.datatypes.Function function = new network.matic.maticj.abi.datatypes.Function(FUNC_GETNEXTEXIT, 
                 Arrays.<Type>asList(new network.matic.maticj.abi.datatypes.Address(_token)), 
                 Arrays.<TypeReference<?>>asList(new TypeReference<Uint256>() {}, new TypeReference<Uint256>() {}));
-        return new RemoteCall<Tuple2<BigInteger, BigInteger>>(function,
+        return new RemoteCall<Tuple2<BigInteger, BigInteger>>(
                 new Callable<Tuple2<BigInteger, BigInteger>>() {
                     @Override
                     public Tuple2<BigInteger, BigInteger> call() throws Exception {
@@ -287,7 +286,7 @@ public class WithdrawManager extends Contract {
         final network.matic.maticj.abi.datatypes.Function function = new network.matic.maticj.abi.datatypes.Function(FUNC_GETEXIT, 
                 Arrays.<Type>asList(new network.matic.maticj.abi.datatypes.generated.Uint256(_utxoPos)), 
                 Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}, new TypeReference<Address>() {}, new TypeReference<Uint256>() {}, new TypeReference<Bool>() {}));
-        return new RemoteCall<Tuple4<String, String, BigInteger, Boolean>>(function,
+        return new RemoteCall<Tuple4<String, String, BigInteger, Boolean>>(
                 new Callable<Tuple4<String, String, BigInteger, Boolean>>() {
                     @Override
                     public Tuple4<String, String, BigInteger, Boolean> call() throws Exception {
@@ -600,7 +599,7 @@ public class WithdrawManager extends Contract {
         return _addresses.get(networkId);
     }
 
-    public static class WithdrawEventResponse extends BaseEventResponse {
+    public static class WithdrawEventResponse {
         public String user;
 
         public String token;
@@ -608,7 +607,7 @@ public class WithdrawManager extends Contract {
         public BigInteger amount;
     }
 
-    public static class ExitStartedEventResponse extends BaseEventResponse {
+    public static class ExitStartedEventResponse {
         public String exitor;
 
         public BigInteger utxoPos;
@@ -618,13 +617,13 @@ public class WithdrawManager extends Contract {
         public BigInteger amount;
     }
 
-    public static class RootChainChangedEventResponse extends BaseEventResponse {
+    public static class RootChainChangedEventResponse {
         public String previousRootChain;
 
         public String newRootChain;
     }
 
-    public static class OwnershipTransferredEventResponse extends BaseEventResponse {
+    public static class OwnershipTransferredEventResponse {
         public String previousOwner;
 
         public String newOwner;

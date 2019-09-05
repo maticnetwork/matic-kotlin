@@ -8,7 +8,7 @@ import network.matic.maticj.core.protocol.core.filters.BlockFilter;
 import network.matic.maticj.core.protocol.core.filters.Filter;
 import network.matic.maticj.core.protocol.core.filters.LogFilter;
 import network.matic.maticj.core.protocol.core.filters.PendingTransactionFilter;
-import network.matic.maticj.core.protocol.core.methods.request.EthFilter;
+import network.matic.maticj.core.protocol.core.methods.response.EthFilter;
 import network.matic.maticj.core.protocol.core.methods.response.EthBlock;
 import network.matic.maticj.core.protocol.core.methods.response.Log;
 import network.matic.maticj.core.protocol.core.methods.response.Transaction;
@@ -62,12 +62,11 @@ public class JsonRpc2_0Rx {
     public Flowable<Log> ethLogFlowable(
             EthFilter ethFilter, long pollingInterval) {
         return Flowable.create(subscriber -> {
-            LogFilter logFilter = new LogFilter(
-                    web3j, subscriber::onNext, ethFilter);
-
+            LogFilter logFilter = new LogFilter(web3j, subscriber::onNext, ethFilter);
             run(logFilter, subscriber, pollingInterval);
         }, BackpressureStrategy.BUFFER);
     }
+
 
     private <T> void run(
             Filter<T> filter, FlowableEmitter<? super T> emitter,
