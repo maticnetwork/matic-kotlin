@@ -1,0 +1,2 @@
+include ':app', ':maticj',
+rootProject.name='Matic SDK Kotlin'
