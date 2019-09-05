@@ -27,18 +27,18 @@ import network.matic.maticj.core.protocol.core.methods.response.Log;
 /** Log filter handler. */
 public class LogFilter extends Filter<Log> {
 
-    private  final EthFilter ethFilter;
+    private  final network.matic.maticj.core.protocol.core.methods.request.EthFilter ethFilter;
 
     public LogFilter(
             Web3j web3j,
             Callback<Log> callback,
-            EthFilter ethFilter) {
+            network.matic.maticj.core.protocol.core.methods.request.EthFilter ethFilter) {
         super(web3j, callback);
         this.ethFilter = ethFilter;
     }
 
     @Override
-    network.matic.maticj.core.protocol.core.methods.response.EthFilter sendRequest() throws IOException {
+    EthFilter sendRequest() throws IOException {
         return web3j.ethNewFilter(ethFilter).send();
     }
 

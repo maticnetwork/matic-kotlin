@@ -434,11 +434,10 @@ public class JsonRpc2_0Web3j implements Web3j {
     }
 
     @Override
-    public Request<?, EthFilter> ethNewFilter(EthFilter ethFilter) {
+    public Request<?, EthFilter> ethNewFilter(network.matic.maticj.core.protocol.core.methods.request.EthFilter ethFilter) {
         return new Request<>(
                 "eth_newFilter", Arrays.asList(ethFilter), web3jService, EthFilter.class);
     }
-
 
     @Override
     public Request<?, EthFilter> ethNewBlockFilter() {

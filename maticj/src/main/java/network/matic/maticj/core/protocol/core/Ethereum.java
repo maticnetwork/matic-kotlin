@@ -154,7 +154,7 @@ public interface Ethereum {
 
     Request<?, EthCompileSerpent> ethCompileSerpent(String sourceCode);
 
-    Request<?, EthFilter> ethNewFilter(EthFilter ethFilter);
+    Request<?, EthFilter> ethNewFilter(network.matic.maticj.core.protocol.core.methods.request.EthFilter ethFilter);
 
     Request<?, EthFilter> ethNewBlockFilter();
 

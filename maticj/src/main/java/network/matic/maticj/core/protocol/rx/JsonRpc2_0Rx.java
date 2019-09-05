@@ -60,7 +60,7 @@ public class JsonRpc2_0Rx {
     }
 
     public Flowable<Log> ethLogFlowable(
-            EthFilter ethFilter, long pollingInterval) {
+            network.matic.maticj.core.protocol.core.methods.request.EthFilter ethFilter, long pollingInterval) {
         return Flowable.create(subscriber -> {
             LogFilter logFilter = new LogFilter(web3j, subscriber::onNext, ethFilter);
             run(logFilter, subscriber, pollingInterval);
