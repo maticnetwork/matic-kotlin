@@ -10,8 +10,8 @@ android {
     defaultConfig {
         minSdkVersion MINIMUM_SDK_VERSION
         targetSdkVersion TARGET_SDK_VERSION
-        versionCode 1
-        versionName "1.0"
+        versionCode VERSION_CODE
+        versionName VERSION_NAME
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles 'consumer-rules.pro'
@@ -39,19 +39,13 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.0.2'
-    implementation 'androidx.core:core-ktx:1.0.2'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$KOTLIN_VERSION"
+    implementation "androidx.appcompat:appcompat:$APP_COMPAT_VERSION"
+    implementation "androidx.core:core-ktx:$APP_COMPAT_VERSION"
 
-    def RX_JAVA_VERSION = '2.2.11'
-    def RX_ANDROID_VERSION = '2.1.1'
     implementation "io.reactivex.rxjava2:rxjava:$RX_JAVA_VERSION"
     implementation "io.reactivex.rxjava2:rxandroid:$RX_ANDROID_VERSION"
 
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.2.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation "net.sourceforge.streamsupport:streamsupport:$STREAM_SUPPORT_VERSION"
     implementation "net.sourceforge.streamsupport:streamsupport-cfuture:$STREAM_SUPPORT_VERSION"
     implementation "com.github.jnr:jnr-unixsocket:$JNR_UNIX_SOCKET_VERSION"
@@ -62,5 +56,4 @@ dependencies {
     implementation "com.fasterxml.jackson.core:jackson-databind:$JACKSON_VERSION"
     implementation "org.slf4j:slf4j-api:$SLF_4_J_VERSION"
     implementation "org.bouncycastle:bcprov-jdk15on:$BOUNCY_CASTLE_VERSION"
-
 }
