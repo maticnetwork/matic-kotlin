@@ -1,4 +1,4 @@
-package network.matic.maticj
+package network.matic.matick
 
 import org.junit.Assert.assertEquals
 import org.junit.Test

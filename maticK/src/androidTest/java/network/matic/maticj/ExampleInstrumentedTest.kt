@@ -1,4 +1,4 @@
-package network.matic.maticj
+package network.matic.matick
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -17,6 +17,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("network.matic.maticj.test", appContext.packageName)
+        assertEquals("network.matic.matick.test", appContext.packageName)
     }
 }
