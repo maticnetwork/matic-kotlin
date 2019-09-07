@@ -56,4 +56,6 @@ dependencies {
     implementation "com.fasterxml.jackson.core:jackson-databind:$JACKSON_VERSION"
     implementation "org.slf4j:slf4j-api:$SLF_4_J_VERSION"
     implementation "org.bouncycastle:bcprov-jdk15on:$BOUNCY_CASTLE_VERSION"
+    implementation "com.squareup.retrofit2:retrofit:$RETROFIT_VERISON"
+
 }
