@@ -78,15 +78,17 @@ object TestMaticK {
 //                it.printStackTrace()
 //            })
 
-        matick.safeDepositERC721Tokens(
-            ConfigTest.ROPSTEN_TEST_TOKEN,
-            BigInteger.valueOf(100000000000000000)
-        )
-            .subscribeOn(Schedulers.io())
-            .subscribe({
-                println("hello it ${it.transactionHash}")
-            }, {
-                it.printStackTrace()
-            })
+//        matick.safeDepositERC721Tokens(
+//            ConfigTest.ROPSTEN_TEST_TOKEN,
+//            BigInteger.valueOf(8)
+//        )
+//            .subscribeOn(Schedulers.io())
+//            .subscribe({
+//                println("hello it ${it.transactionHash}")
+//            }, {
+//                it.printStackTrace()
+//            })
+
+        matick.getTx()
     }
 }

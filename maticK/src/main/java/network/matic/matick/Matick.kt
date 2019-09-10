@@ -2,6 +2,7 @@ package network.matic.matick
 
 import io.reactivex.Flowable
 import io.reactivex.functions.BiFunction
+import network.matic.matick.api.ApiClient
 import network.matic.matick.artifacts.*
 import network.matic.matick.core.protocol.Web3j
 import network.matic.matick.core.protocol.core.DefaultBlockParameterName
@@ -12,6 +13,10 @@ import network.matic.matick.core.protocol.core.methods.response.TransactionRecei
 import network.matic.matick.core.protocol.http.HttpService
 import network.matic.matick.core.tx.gas.ContractGasProvider
 import network.matic.matick.crypto.Credentials
+import network.matic.matick.model.TransactionModel
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.math.BigInteger
 
 
@@ -99,7 +104,7 @@ class Matick {
         }
     }
 
-    fun loadRootChainContract(contractAddress: String, parent: Boolean): Flowable<RootChain> {
+    fun loadRootChainContract(contractAddress: String, parent: Boolean): Flowable<_RootChain> {
 
         return getGasPrice().zipWith(
             estimateGasLimit(),
@@ -108,7 +113,7 @@ class Matick {
             }
         ).map {
             println("gas ${it.ethEstimateGas}")
-            RootChain.load(
+            _RootChain.load(
                 contractAddress,
                 if (parent) web3jParent else web3j,
                 Credentials.create(ConfigUtils.PRIVATE_KEY),
@@ -234,7 +239,7 @@ class Matick {
     fun depositEthers(contractAddress: String, userAddress: String, parent: Boolean = false) {
 //        loadRootChainContract(contractAddress, parent)
 //            .flatMap {
-//                it.balanceOf(userAddress).flowable()
+//                it.depositEthers()
 //            }
     }
 
@@ -309,8 +314,11 @@ class Matick {
 //                val signedTransaction = TransactionEncoder.signMessage(it, Credentials.create(
 //                    ConfigUtils.privateKey
 //                ))
-////                val hexValue = Numeric.toHexString(signedTransaction)
-////                web3j.ethSendRawTransaction(hexValue).send()
+//                val hexValue = Numeric.toHexString(signedTransaction)                val signedTransaction = TransactionEncoder.signMessage(it, Credentials.create(
+//                    ConfigUtils.privateKey
+//                ))
+//                val hexValue = Numeric.toHexString(signedTransaction)
+//                web3j.ethSendRawTransaction(hexValue).send()
 //            }
     }
 
@@ -359,7 +367,17 @@ class Matick {
     }
 
     fun getTx() {
+        ApiClient.instance.getTransaction("https://matic-syncer2.api.matic.network/api/v1/tx/0xd8a23083d6ad4d0f081c180450bbab964c25263a6b225b98751406c23e54cb31/").enqueue(object : Callback<TransactionModel>{
 
+            override fun onFailure(call: Call<TransactionModel>, t: Throwable) {
+                println(t.message)
+            }
+
+            override fun onResponse(call: Call<TransactionModel>, response: Response<TransactionModel>) {
+                println("response ${response.body()}")
+            }
+
+        })
     }
 
     fun getReceipt() {
