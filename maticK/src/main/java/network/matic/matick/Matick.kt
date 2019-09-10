@@ -211,8 +211,15 @@ class Matick {
             }
     }
 
-    fun getERC721Balance(contractAddress: String, parent: Boolean = false) {
-
+    fun getERC721Balance(
+        contractAddress: String,
+        userAddress: String,
+        parent: Boolean = false
+    ): Flowable<BigInteger> {
+        return loadERC721Contract(contractAddress, parent)
+            .flatMap {
+                it.balanceOf(userAddress).flowable()
+            }
     }
 
     fun getMappedcontractAddress(contractAddress: String, parent: Boolean = false) {
@@ -256,7 +263,7 @@ class Matick {
     fun safeDepositERC721Tokens(
         contractAddress: String,
         amount: BigInteger,
-        parent: Boolean = false
+        parent: Boolean = true
     ): Flowable<TransactionReceipt> {
         return loadERC721Contract(contractAddress, parent)
             .flatMap {
@@ -268,7 +275,7 @@ class Matick {
     fun approveERC721TokenForDeposit(
         contractAddress: String,
         amount: BigInteger,
-        parent: Boolean = false
+        parent: Boolean = true
     ): Flowable<TransactionReceipt> {
         return loadERC721Contract(contractAddress, parent)
             .flatMap {
@@ -279,7 +286,7 @@ class Matick {
     fun depositERC721Tokens(
         contractAddress: String,
         amount: BigInteger,
-        parent: Boolean = false
+        parent: Boolean = true
     ): Flowable<TransactionReceipt> {
         return loadRootChainContract(contractAddress, parent)
             .flatMap {
@@ -387,11 +394,11 @@ class Matick {
 
     }
 
-    fun withdraw(contractAddress: String, parent: Boolean = false) {
+    fun withdraw(contractAddress: String, parent: Boolean = true) {
 
     }
 
-    fun processExits(contractAddress: String, parent: Boolean = false) {
+    fun processExits(contractAddress: String, parent: Boolean = true) {
 
     }
 
