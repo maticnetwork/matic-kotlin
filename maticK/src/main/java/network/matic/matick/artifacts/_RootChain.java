@@ -24,6 +24,7 @@ import network.matic.matick.core.protocol.Web3j;
 import network.matic.matick.core.protocol.core.DefaultBlockParameter;
 import network.matic.matick.core.protocol.core.RemoteCall;
 import network.matic.matick.core.protocol.core.methods.request.EthFilter;
+import network.matic.matick.core.protocol.core.methods.response.BaseEventResponse;
 import network.matic.matick.core.protocol.core.methods.response.Log;
 import network.matic.matick.core.protocol.core.methods.response.TransactionReceipt;
 import network.matic.matick.core.tx.Contract;
@@ -42,7 +43,7 @@ import network.matic.matick.tuples.generated.Tuple5;
  *
  * <p>Generated with web3j version 4.4.1.
  */
-public class _RootChain extends Contract {
+public class RootChain extends Contract {
     public static final String FUNC_CHILDCHAINCONTRACT = "childChainContract";
     public static final String FUNC_ROUNDTYPE = "roundType";
     public static final String FUNC_HEADERBLOCKS = "headerBlocks";
@@ -117,57 +118,57 @@ public class _RootChain extends Contract {
     }
 
     @Deprecated
-    protected _RootChain(String contractAddress, Web3j web3j, Credentials credentials, BigInteger gasPrice, BigInteger gasLimit) {
+    protected RootChain(String contractAddress, Web3j web3j, Credentials credentials, BigInteger gasPrice, BigInteger gasLimit) {
         super(BINARY, contractAddress, web3j, credentials, gasPrice, gasLimit);
     }
 
-    protected _RootChain(String contractAddress, Web3j web3j, Credentials credentials, ContractGasProvider contractGasProvider) {
+    protected RootChain(String contractAddress, Web3j web3j, Credentials credentials, ContractGasProvider contractGasProvider) {
         super(BINARY, contractAddress, web3j, credentials, contractGasProvider);
     }
 
     @Deprecated
-    protected _RootChain(String contractAddress, Web3j web3j, TransactionManager transactionManager, BigInteger gasPrice, BigInteger gasLimit) {
+    protected RootChain(String contractAddress, Web3j web3j, TransactionManager transactionManager, BigInteger gasPrice, BigInteger gasLimit) {
         super(BINARY, contractAddress, web3j, transactionManager, gasPrice, gasLimit);
     }
 
-    protected _RootChain(String contractAddress, Web3j web3j, TransactionManager transactionManager, ContractGasProvider contractGasProvider) {
+    protected RootChain(String contractAddress, Web3j web3j, TransactionManager transactionManager, ContractGasProvider contractGasProvider) {
         super(BINARY, contractAddress, web3j, transactionManager, contractGasProvider);
     }
 
     @Deprecated
-    public static _RootChain load(String contractAddress, Web3j web3j, Credentials credentials, BigInteger gasPrice, BigInteger gasLimit) {
-        return new _RootChain(contractAddress, web3j, credentials, gasPrice, gasLimit);
+    public static RootChain load(String contractAddress, Web3j web3j, Credentials credentials, BigInteger gasPrice, BigInteger gasLimit) {
+        return new RootChain(contractAddress, web3j, credentials, gasPrice, gasLimit);
     }
 
     @Deprecated
-    public static _RootChain load(String contractAddress, Web3j web3j, TransactionManager transactionManager, BigInteger gasPrice, BigInteger gasLimit) {
-        return new _RootChain(contractAddress, web3j, transactionManager, gasPrice, gasLimit);
+    public static RootChain load(String contractAddress, Web3j web3j, TransactionManager transactionManager, BigInteger gasPrice, BigInteger gasLimit) {
+        return new RootChain(contractAddress, web3j, transactionManager, gasPrice, gasLimit);
     }
 
-    public static _RootChain load(String contractAddress, Web3j web3j, Credentials credentials, ContractGasProvider contractGasProvider) {
-        return new _RootChain(contractAddress, web3j, credentials, contractGasProvider);
+    public static RootChain load(String contractAddress, Web3j web3j, Credentials credentials, ContractGasProvider contractGasProvider) {
+        return new RootChain(contractAddress, web3j, credentials, contractGasProvider);
     }
 
-    public static _RootChain load(String contractAddress, Web3j web3j, TransactionManager transactionManager, ContractGasProvider contractGasProvider) {
-        return new _RootChain(contractAddress, web3j, transactionManager, contractGasProvider);
+    public static RootChain load(String contractAddress, Web3j web3j, TransactionManager transactionManager, ContractGasProvider contractGasProvider) {
+        return new RootChain(contractAddress, web3j, transactionManager, contractGasProvider);
     }
 
-    public static RemoteCall<_RootChain> deploy(Web3j web3j, Credentials credentials, ContractGasProvider contractGasProvider) {
-        return deployRemoteCall(_RootChain.class, web3j, credentials, contractGasProvider, BINARY, "");
+    public static RemoteCall<RootChain> deploy(Web3j web3j, Credentials credentials, ContractGasProvider contractGasProvider) {
+        return deployRemoteCall(RootChain.class, web3j, credentials, contractGasProvider, BINARY, "");
     }
 
-    public static RemoteCall<_RootChain> deploy(Web3j web3j, TransactionManager transactionManager, ContractGasProvider contractGasProvider) {
-        return deployRemoteCall(_RootChain.class, web3j, transactionManager, contractGasProvider, BINARY, "");
-    }
-
-    @Deprecated
-    public static RemoteCall<_RootChain> deploy(Web3j web3j, Credentials credentials, BigInteger gasPrice, BigInteger gasLimit) {
-        return deployRemoteCall(_RootChain.class, web3j, credentials, gasPrice, gasLimit, BINARY, "");
+    public static RemoteCall<RootChain> deploy(Web3j web3j, TransactionManager transactionManager, ContractGasProvider contractGasProvider) {
+        return deployRemoteCall(RootChain.class, web3j, transactionManager, contractGasProvider, BINARY, "");
     }
 
     @Deprecated
-    public static RemoteCall<_RootChain> deploy(Web3j web3j, TransactionManager transactionManager, BigInteger gasPrice, BigInteger gasLimit) {
-        return deployRemoteCall(_RootChain.class, web3j, transactionManager, gasPrice, gasLimit, BINARY, "");
+    public static RemoteCall<RootChain> deploy(Web3j web3j, Credentials credentials, BigInteger gasPrice, BigInteger gasLimit) {
+        return deployRemoteCall(RootChain.class, web3j, credentials, gasPrice, gasLimit, BINARY, "");
+    }
+
+    @Deprecated
+    public static RemoteCall<RootChain> deploy(Web3j web3j, TransactionManager transactionManager, BigInteger gasPrice, BigInteger gasLimit) {
+        return deployRemoteCall(RootChain.class, web3j, transactionManager, gasPrice, gasLimit, BINARY, "");
     }
 
     public static String getPreviouslyDeployedAddress(String networkId) {
@@ -716,7 +717,7 @@ public class _RootChain extends Contract {
         public String from;
     }
 
-    public static class ProofValidatorRemovedEventResponse {
+    public static class ProofValidatorRemovedEventResponse extends BaseEventResponse {
         public String validator;
 
         public String from;
