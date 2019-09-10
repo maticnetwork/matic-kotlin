@@ -219,7 +219,7 @@ public class TypeDecoder {
         try {
             Class<? extends StaticArray> arrayClass =
                     (Class<? extends StaticArray>) Class.forName(
-                            "org.web3j.abi.datatypes.generated.StaticArray" + length);
+                            "network.matic.matick.abi.datatypes.generated.StaticArray" + length);
 
             return (T) arrayClass.getConstructor(List.class).newInstance(elements);
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException
