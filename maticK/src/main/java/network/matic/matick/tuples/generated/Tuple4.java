@@ -1,6 +1,7 @@
 package network.matic.matick.tuples.generated;
 
 import network.matic.matick.tuples.Tuple;
+
 /**
  * Auto generated code.
  * <p><strong>Do not modifiy!</strong>

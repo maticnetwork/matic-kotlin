@@ -8,13 +8,11 @@ import java.util.Properties;
  */
 public class Version {
 
-    private Version() {
-    }
-
     public static final String DEFAULT = "none";
-
     private static final String TIMESTAMP = "timestamp";
     private static final String VERSION = "version";
+    private Version() {
+    }
 
     public static String getVersion() throws IOException {
         return loadProperties().getProperty(VERSION);

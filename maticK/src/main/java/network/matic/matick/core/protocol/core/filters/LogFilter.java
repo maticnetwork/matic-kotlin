@@ -24,10 +24,12 @@ import network.matic.matick.core.protocol.core.methods.response.EthLog;
 import network.matic.matick.core.protocol.core.methods.response.Log;
 
 
-/** Log filter handler. */
+/**
+ * Log filter handler.
+ */
 public class LogFilter extends Filter<Log> {
 
-    private  final network.matic.matick.core.protocol.core.methods.request.EthFilter ethFilter;
+    private final network.matic.matick.core.protocol.core.methods.request.EthFilter ethFilter;
 
     public LogFilter(
             Web3j web3j,

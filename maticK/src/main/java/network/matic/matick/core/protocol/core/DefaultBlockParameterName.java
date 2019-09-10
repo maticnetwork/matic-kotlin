@@ -16,12 +16,6 @@ public enum DefaultBlockParameterName implements DefaultBlockParameter {
         this.name = name;
     }
 
-    @JsonValue
-    @Override
-    public String getValue() {
-        return name;
-    }
-
     public static DefaultBlockParameterName fromString(String name) {
         if (name != null) {
             for (DefaultBlockParameterName defaultBlockParameterName :
@@ -32,5 +26,11 @@ public enum DefaultBlockParameterName implements DefaultBlockParameter {
             }
         }
         return valueOf(name);
+    }
+
+    @JsonValue
+    @Override
+    public String getValue() {
+        return name;
     }
 }

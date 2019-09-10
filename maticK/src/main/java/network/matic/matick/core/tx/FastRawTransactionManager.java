@@ -46,15 +46,15 @@ public class FastRawTransactionManager extends RawTransactionManager {
         return nonce;
     }
 
+    public synchronized void setNonce(BigInteger value) {
+        nonce = value;
+    }
+
     public BigInteger getCurrentNonce() {
         return nonce;
     }
 
     public synchronized void resetNonce() throws IOException {
         nonce = super.getNonce();
-    }
-
-    public synchronized void setNonce(BigInteger value) {
-        nonce = value;
     }
 }

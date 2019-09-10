@@ -30,9 +30,12 @@ import network.matic.matick.abi.datatypes.Uint;
 import network.matic.matick.abi.datatypes.Utf8String;
 
 
-/** Utility functions. */
+/**
+ * Utility functions.
+ */
 public class Utils {
-    private Utils() {}
+    private Utils() {
+    }
 
     static <T extends Type> String getTypeName(TypeReference<T> typeReference) {
         try {

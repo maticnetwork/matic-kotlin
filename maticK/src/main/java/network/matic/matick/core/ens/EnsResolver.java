@@ -36,12 +36,17 @@ public class EnsResolver {
         this(web3j, DEFAULT_SYNC_THRESHOLD);
     }
 
-    public void setSyncThreshold(long syncThreshold) {
-        this.syncThreshold = syncThreshold;
+    public static boolean isValidEnsName(String input) {
+        return input != null  // will be set to null on new Contract creation
+                && (input.contains(".") || !WalletUtils.isValidAddress(input));
     }
 
     public long getSyncThreshold() {
         return syncThreshold;
+    }
+
+    public void setSyncThreshold(long syncThreshold) {
+        this.syncThreshold = syncThreshold;
     }
 
     /**
@@ -148,10 +153,5 @@ public class EnsResolver {
 
             return System.currentTimeMillis() - syncThreshold < timestamp;
         }
-    }
-
-    public static boolean isValidEnsName(String input) {
-        return input != null  // will be set to null on new Contract creation
-                && (input.contains(".") || !WalletUtils.isValidAddress(input));
     }
 }

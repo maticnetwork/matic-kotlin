@@ -55,49 +55,6 @@ public abstract class TypeReference<T extends network.matic.matick.abi.datatypes
         this.indexed = indexed;
     }
 
-    /**
-     * getSubTypeReference() is used by instantiateType to see what TypeReference is wrapped by this
-     * one. eg calling getSubTypeReference() on a TypeReference to
-     * DynamicArray[StaticArray3[Uint256]] would return a TypeReference to StaticArray3[Uint256]
-     *
-     * @return the type wrapped by this Array TypeReference, or null if not Array
-     */
-    TypeReference getSubTypeReference() {
-        return null;
-    }
-
-    public int compareTo(TypeReference<T> o) {
-        // taken from the blog post comments - this results in an errror if the
-        // type parameter is left out.
-        return 0;
-    }
-
-    public Type getType() {
-        return type;
-    }
-
-    public boolean isIndexed() {
-        return indexed;
-    }
-
-    /**
-     * Workaround to ensure type does not come back as T due to erasure, this enables you to create
-     * a TypeReference via {@link Class Class&lt;T&gt;}.
-     *
-     * @return the parameterized Class type if applicable, otherwise a regular class
-     * @throws ClassNotFoundException if the class type cannot be determined
-     */
-    @SuppressWarnings("unchecked")
-    public Class<T> getClassType() throws ClassNotFoundException {
-        Type clsType = getType();
-
-        if (getType() instanceof ParameterizedType) {
-            return (Class<T>) ((ParameterizedType) clsType).getRawType();
-        } else {
-            return (Class<T>) Class.forName(clsType.getTypeName());
-        }
-    }
-
     public static <T extends network.matic.matick.abi.datatypes.Type> TypeReference<T> create(Class<T> cls) {
         return create(cls, false);
     }
@@ -125,20 +82,6 @@ public abstract class TypeReference<T extends network.matic.matick.abi.datatypes
         } else {
 //            return AbiTypes.getType(solidityType, primitives);
             return AbiTypes.getType(solidityType);
-        }
-    }
-
-    public abstract static class StaticArrayTypeReference<T extends network.matic.matick.abi.datatypes.Type>
-            extends TypeReference<T> {
-
-        private final int size;
-
-        protected StaticArrayTypeReference(int size) {
-            this.size = size;
-        }
-
-        public int getSize() {
-            return size;
         }
     }
 
@@ -183,7 +126,7 @@ public abstract class TypeReference<T extends network.matic.matick.abi.datatypes
                                 return new ParameterizedType() {
                                     @Override
                                     public java.lang.reflect.Type[] getActualTypeArguments() {
-                                        return new java.lang.reflect.Type[] {baseTr.getType()};
+                                        return new java.lang.reflect.Type[]{baseTr.getType()};
                                     }
 
                                     @Override
@@ -226,7 +169,7 @@ public abstract class TypeReference<T extends network.matic.matick.abi.datatypes
                                 return new ParameterizedType() {
                                     @Override
                                     public java.lang.reflect.Type[] getActualTypeArguments() {
-                                        return new java.lang.reflect.Type[] {baseTr.getType()};
+                                        return new java.lang.reflect.Type[]{baseTr.getType()};
                                     }
 
                                     @Override
@@ -251,5 +194,62 @@ public abstract class TypeReference<T extends network.matic.matick.abi.datatypes
             }
         }
         return arrayWrappedType;
+    }
+
+    /**
+     * getSubTypeReference() is used by instantiateType to see what TypeReference is wrapped by this
+     * one. eg calling getSubTypeReference() on a TypeReference to
+     * DynamicArray[StaticArray3[Uint256]] would return a TypeReference to StaticArray3[Uint256]
+     *
+     * @return the type wrapped by this Array TypeReference, or null if not Array
+     */
+    TypeReference getSubTypeReference() {
+        return null;
+    }
+
+    public int compareTo(TypeReference<T> o) {
+        // taken from the blog post comments - this results in an errror if the
+        // type parameter is left out.
+        return 0;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public boolean isIndexed() {
+        return indexed;
+    }
+
+    /**
+     * Workaround to ensure type does not come back as T due to erasure, this enables you to create
+     * a TypeReference via {@link Class Class&lt;T&gt;}.
+     *
+     * @return the parameterized Class type if applicable, otherwise a regular class
+     * @throws ClassNotFoundException if the class type cannot be determined
+     */
+    @SuppressWarnings("unchecked")
+    public Class<T> getClassType() throws ClassNotFoundException {
+        Type clsType = getType();
+
+        if (getType() instanceof ParameterizedType) {
+            return (Class<T>) ((ParameterizedType) clsType).getRawType();
+        } else {
+            return (Class<T>) Class.forName(clsType.getTypeName());
+        }
+    }
+
+    public abstract static class StaticArrayTypeReference<T extends network.matic.matick.abi.datatypes.Type>
+            extends TypeReference<T> {
+
+        private final int size;
+
+        protected StaticArrayTypeReference(int size) {
+            this.size = size;
+        }
+
+        public int getSize() {
+            return size;
+        }
     }
 }

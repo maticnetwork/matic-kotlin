@@ -31,6 +31,9 @@ import static okhttp3.ConnectionSpec.CLEARTEXT;
  */
 public class HttpService extends Service {
 
+    public static final MediaType JSON_MEDIA_TYPE
+            = MediaType.parse("application/json; charset=utf-8");
+    public static final String DEFAULT_URL = "http://localhost:8545/";
     /**
      * Copied from {@link ConnectionSpec#APPROVED_CIPHER_SUITES}.
      */
@@ -61,29 +64,17 @@ public class HttpService extends Service {
             CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA256,
             CipherSuite.TLS_RSA_WITH_AES_256_CBC_SHA256
     };
-
     private static final ConnectionSpec INFURA_CIPHER_SUITE_SPEC = new ConnectionSpec
             .Builder(ConnectionSpec.MODERN_TLS).cipherSuites(INFURA_CIPHER_SUITES).build();
-
     /**
      * The list of {@link ConnectionSpec} instances used by the connection.
      */
     private static final List<ConnectionSpec> CONNECTION_SPEC_LIST = Arrays.asList(
             INFURA_CIPHER_SUITE_SPEC, CLEARTEXT);
-
-    public static final MediaType JSON_MEDIA_TYPE
-            = MediaType.parse("application/json; charset=utf-8");
-
-    public static final String DEFAULT_URL = "http://localhost:8545/";
-
     private static final Logger log = LoggerFactory.getLogger(HttpService.class);
-
-    private OkHttpClient httpClient;
-
     private final String url;
-
     private final boolean includeRawResponse;
-
+    private OkHttpClient httpClient;
     private HashMap<String, String> headers = new HashMap<>();
 
     public HttpService(String url, OkHttpClient httpClient, boolean includeRawResponses) {

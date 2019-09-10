@@ -11,8 +11,8 @@ import network.matic.matick.abi.datatypes.generated.AbiTypes;
  */
 public abstract class Array<T extends Type> implements Type<List<T>> {
 
-    private final Class<T> type;
     protected final List<T> value;
+    private final Class<T> type;
 
     @Deprecated
     @SafeVarargs

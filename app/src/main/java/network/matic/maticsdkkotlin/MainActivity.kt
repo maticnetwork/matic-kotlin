@@ -1,8 +1,7 @@
 package network.matic.maticsdkkotlin
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import network.matic.maticsdkkotlin.TestMaticK
+import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
 

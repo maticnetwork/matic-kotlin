@@ -7,8 +7,8 @@ import java.math.BigInteger;
  */
 public abstract class NumericType implements Type<BigInteger> {
 
-    private String type;
     BigInteger value;
+    private String type;
 
     public NumericType(String type, BigInteger value) {
         this.type = type;

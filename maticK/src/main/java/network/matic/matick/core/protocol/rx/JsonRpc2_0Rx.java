@@ -21,7 +21,6 @@ import network.matic.matick.core.protocol.core.filters.Filter;
 import network.matic.matick.core.protocol.core.filters.LogFilter;
 import network.matic.matick.core.protocol.core.filters.PendingTransactionFilter;
 import network.matic.matick.core.protocol.core.methods.response.EthBlock;
-import network.matic.matick.core.protocol.core.methods.response.EthFilter;
 import network.matic.matick.core.protocol.core.methods.response.Log;
 import network.matic.matick.core.protocol.core.methods.response.Transaction;
 import network.matic.matick.core.utils.Flowables;
@@ -39,6 +38,14 @@ public class JsonRpc2_0Rx {
         this.web3j = web3j;
         this.scheduledExecutorService = scheduledExecutorService;
         this.scheduler = Schedulers.from(scheduledExecutorService);
+    }
+
+    private static List<Transaction> toTransactions(EthBlock ethBlock) {
+        // If you ever see an exception thrown here, it's probably due to an incomplete chain in
+        // Geth/Parity. You should resync to solve.
+        return StreamSupport.stream(ethBlock.getBlock().getTransactions())
+                .map(transactionResult -> (Transaction) transactionResult.get())
+                .collect(Collectors.toList());
     }
 
     public Flowable<String> ethBlockHashFlowable(long pollingInterval) {
@@ -65,7 +72,6 @@ public class JsonRpc2_0Rx {
             run(logFilter, subscriber, pollingInterval);
         }, BackpressureStrategy.BUFFER);
     }
-
 
     private <T> void run(
             Filter<T> filter, FlowableEmitter<? super T> emitter,
@@ -228,13 +234,5 @@ public class JsonRpc2_0Rx {
                     defaultBlockParameter, false).send();
             return latestEthBlock.getBlock().getNumber();
         }
-    }
-
-    private static List<Transaction> toTransactions(EthBlock ethBlock) {
-        // If you ever see an exception thrown here, it's probably due to an incomplete chain in
-        // Geth/Parity. You should resync to solve.
-        return StreamSupport.stream(ethBlock.getBlock().getTransactions())
-                .map(transactionResult -> (Transaction) transactionResult.get())
-                .collect(Collectors.toList());
     }
 }

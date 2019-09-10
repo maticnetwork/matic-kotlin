@@ -70,6 +70,23 @@ public class Bip32ECKeyPair extends ECKeyPair {
         return curr;
     }
 
+    private static byte[] bigIntegerToBytes32(BigInteger b) {
+        final int numBytes = 32;
+
+        byte[] src = b.toByteArray();
+        byte[] dest = new byte[numBytes];
+        boolean isFirstByteOnlyForSign = src[0] == 0;
+        int length = isFirstByteOnlyForSign ? src.length - 1 : src.length;
+        int srcPos = isFirstByteOnlyForSign ? 1 : 0;
+        int destPos = numBytes - length;
+        System.arraycopy(src, srcPos, dest, destPos, length);
+        return dest;
+    }
+
+    private static boolean isHardened(int a) {
+        return (a & HARDENED_BIT) != 0;
+    }
+
     private Bip32ECKeyPair deriveChildKey(int childNumber) {
         if (!hasPrivateKey()) {
             byte[] parentPublicKey = getPublicKeyPoint().getEncoded(true);
@@ -152,22 +169,5 @@ public class Bip32ECKeyPair extends ECKeyPair {
 
     private boolean hasPrivateKey() {
         return this.getPrivateKey() != null || parentHasPrivate;
-    }
-
-    private static byte[] bigIntegerToBytes32(BigInteger b) {
-        final int numBytes = 32;
-
-        byte[] src = b.toByteArray();
-        byte[] dest = new byte[numBytes];
-        boolean isFirstByteOnlyForSign = src[0] == 0;
-        int length = isFirstByteOnlyForSign ? src.length - 1 : src.length;
-        int srcPos = isFirstByteOnlyForSign ? 1 : 0;
-        int destPos = numBytes - length;
-        System.arraycopy(src, srcPos, dest, destPos, length);
-        return dest;
-    }
-
-    private static boolean isHardened(int a) {
-        return (a & HARDENED_BIT) != 0;
     }
 }

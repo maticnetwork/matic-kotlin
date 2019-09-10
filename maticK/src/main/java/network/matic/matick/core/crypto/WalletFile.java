@@ -100,6 +100,12 @@ public class WalletFile {
         return result;
     }
 
+    interface KdfParams {
+        int getDklen();
+
+        String getSalt();
+    }
+
     public static class Crypto {
         private String cipher;
         private String ciphertext;
@@ -261,12 +267,6 @@ public class WalletFile {
             return result;
         }
 
-    }
-
-    interface KdfParams {
-        int getDklen();
-
-        String getSalt();
     }
 
     public static class Aes128CtrKdfParams implements KdfParams {

@@ -15,11 +15,6 @@ public abstract class IntType extends NumericType {
         }
     }
 
-    boolean valid(int bitSize, BigInteger value) {
-        return isValidBitSize(bitSize)
-                && isValidBitCount(bitSize, value);
-    }
-
     static boolean isValidBitSize(int bitSize) {
         return bitSize % 8 == 0
                 && bitSize > 0
@@ -28,5 +23,10 @@ public abstract class IntType extends NumericType {
 
     private static boolean isValidBitCount(int bitSize, BigInteger value) {
         return value.bitLength() <= bitSize;
+    }
+
+    boolean valid(int bitSize, BigInteger value) {
+        return isValidBitSize(bitSize)
+                && isValidBitCount(bitSize, value);
     }
 }

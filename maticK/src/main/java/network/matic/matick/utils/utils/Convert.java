@@ -45,15 +45,6 @@ public final class Convert {
             this.weiFactor = BigDecimal.TEN.pow(factor);
         }
 
-        public BigDecimal getWeiFactor() {
-            return weiFactor;
-        }
-
-        @Override
-        public String toString() {
-            return name;
-        }
-
         public static Unit fromString(String name) {
             if (name != null) {
                 for (Unit unit : Unit.values()) {
@@ -63,6 +54,15 @@ public final class Convert {
                 }
             }
             return Unit.valueOf(name);
+        }
+
+        public BigDecimal getWeiFactor() {
+            return weiFactor;
+        }
+
+        @Override
+        public String toString() {
+            return name;
         }
     }
 }

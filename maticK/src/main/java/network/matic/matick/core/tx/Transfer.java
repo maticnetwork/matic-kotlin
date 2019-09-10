@@ -26,6 +26,17 @@ public class Transfer extends ManagedTransaction {
         super(web3j, transactionManager);
     }
 
+    public static RemoteCall<TransactionReceipt> sendFunds(
+            Web3j web3j, Credentials credentials,
+            String toAddress, BigDecimal value, Convert.Unit unit) throws InterruptedException,
+            IOException, TransactionException {
+
+        TransactionManager transactionManager = new RawTransactionManager(web3j, credentials);
+
+        return new RemoteCall<>(() ->
+                new Transfer(web3j, transactionManager).send(toAddress, value, unit));
+    }
+
     /**
      * Given the duration required to execute a transaction, asyncronous execution is strongly
      * recommended via {@link Transfer#sendFunds(String, BigDecimal, Convert.Unit)}.
@@ -62,17 +73,6 @@ public class Transfer extends ManagedTransaction {
 
         String resolvedAddress = ensResolver.resolve(toAddress);
         return send(resolvedAddress, "", weiValue.toBigIntegerExact(), gasPrice, gasLimit);
-    }
-
-    public static RemoteCall<TransactionReceipt> sendFunds(
-            Web3j web3j, Credentials credentials,
-            String toAddress, BigDecimal value, Convert.Unit unit) throws InterruptedException,
-            IOException, TransactionException {
-
-        TransactionManager transactionManager = new RawTransactionManager(web3j, credentials);
-
-        return new RemoteCall<>(() ->
-                new Transfer(web3j, transactionManager).send(toAddress, value, unit));
     }
 
     /**

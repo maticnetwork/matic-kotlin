@@ -45,6 +45,10 @@ public class EthBlock extends Response<EthBlock.Block> {
         return getResult();
     }
 
+    public interface TransactionResult<T> {
+        T get();
+    }
+
     public static class Block {
         private String number;
         private String hash;
@@ -107,12 +111,12 @@ public class EthBlock extends Response<EthBlock.Block> {
             return Numeric.decodeQuantity(number);
         }
 
-        public String getNumberRaw() {
-            return number;
-        }
-
         public void setNumber(String number) {
             this.number = number;
+        }
+
+        public String getNumberRaw() {
+            return number;
         }
 
         public String getHash() {
@@ -135,12 +139,12 @@ public class EthBlock extends Response<EthBlock.Block> {
             return Numeric.decodeQuantity(nonce);
         }
 
-        public String getNonceRaw() {
-            return nonce;
-        }
-
         public void setNonce(String nonce) {
             this.nonce = nonce;
+        }
+
+        public String getNonceRaw() {
+            return nonce;
         }
 
         public String getSha3Uncles() {
@@ -211,24 +215,24 @@ public class EthBlock extends Response<EthBlock.Block> {
             return Numeric.decodeQuantity(difficulty);
         }
 
-        public String getDifficultyRaw() {
-            return difficulty;
-        }
-
         public void setDifficulty(String difficulty) {
             this.difficulty = difficulty;
+        }
+
+        public String getDifficultyRaw() {
+            return difficulty;
         }
 
         public BigInteger getTotalDifficulty() {
             return Numeric.decodeQuantity(totalDifficulty);
         }
 
-        public String getTotalDifficultyRaw() {
-            return totalDifficulty;
-        }
-
         public void setTotalDifficulty(String totalDifficulty) {
             this.totalDifficulty = totalDifficulty;
+        }
+
+        public String getTotalDifficultyRaw() {
+            return totalDifficulty;
         }
 
         public String getExtraData() {
@@ -243,48 +247,48 @@ public class EthBlock extends Response<EthBlock.Block> {
             return Numeric.decodeQuantity(size);
         }
 
-        public String getSizeRaw() {
-            return size;
-        }
-
         public void setSize(String size) {
             this.size = size;
+        }
+
+        public String getSizeRaw() {
+            return size;
         }
 
         public BigInteger getGasLimit() {
             return Numeric.decodeQuantity(gasLimit);
         }
 
-        public String getGasLimitRaw() {
-            return gasLimit;
-        }
-
         public void setGasLimit(String gasLimit) {
             this.gasLimit = gasLimit;
+        }
+
+        public String getGasLimitRaw() {
+            return gasLimit;
         }
 
         public BigInteger getGasUsed() {
             return Numeric.decodeQuantity(gasUsed);
         }
 
-        public String getGasUsedRaw() {
-            return gasUsed;
-        }
-
         public void setGasUsed(String gasUsed) {
             this.gasUsed = gasUsed;
+        }
+
+        public String getGasUsedRaw() {
+            return gasUsed;
         }
 
         public BigInteger getTimestamp() {
             return Numeric.decodeQuantity(timestamp);
         }
 
-        public String getTimestampRaw() {
-            return timestamp;
-        }
-
         public void setTimestamp(String timestamp) {
             this.timestamp = timestamp;
+        }
+
+        public String getTimestampRaw() {
+            return timestamp;
         }
 
         public List<TransactionResult> getTransactions() {
@@ -452,10 +456,6 @@ public class EthBlock extends Response<EthBlock.Block> {
             result = 31 * result + (getSealFields() != null ? getSealFields().hashCode() : 0);
             return result;
         }
-    }
-
-    public interface TransactionResult<T> {
-        T get();
     }
 
     public static class TransactionHash implements TransactionResult<String> {

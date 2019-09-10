@@ -81,6 +81,14 @@ public class Transaction {
         return new Transaction(from, null, null, null, to, null, data);
     }
 
+    private static String convert(BigInteger value) {
+        if (value != null) {
+            return Numeric.encodeQuantity(value);
+        } else {
+            return null;  // we don't want the field to be encoded if not present
+        }
+    }
+
     public String getFrom() {
         return from;
     }
@@ -107,13 +115,5 @@ public class Transaction {
 
     public String getNonce() {
         return convert(nonce);
-    }
-
-    private static String convert(BigInteger value) {
-        if (value != null) {
-            return Numeric.encodeQuantity(value);
-        } else {
-            return null;  // we don't want the field to be encoded if not present
-        }
     }
 }

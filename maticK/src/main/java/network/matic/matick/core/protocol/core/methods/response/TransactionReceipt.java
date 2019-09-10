@@ -60,12 +60,12 @@ public class TransactionReceipt {
         return Numeric.decodeQuantity(transactionIndex);
     }
 
-    public String getTransactionIndexRaw() {
-        return transactionIndex;
-    }
-
     public void setTransactionIndex(String transactionIndex) {
         this.transactionIndex = transactionIndex;
+    }
+
+    public String getTransactionIndexRaw() {
+        return transactionIndex;
     }
 
     public String getBlockHash() {
@@ -80,36 +80,36 @@ public class TransactionReceipt {
         return Numeric.decodeQuantity(blockNumber);
     }
 
-    public String getBlockNumberRaw() {
-        return blockNumber;
-    }
-
     public void setBlockNumber(String blockNumber) {
         this.blockNumber = blockNumber;
+    }
+
+    public String getBlockNumberRaw() {
+        return blockNumber;
     }
 
     public BigInteger getCumulativeGasUsed() {
         return Numeric.decodeQuantity(cumulativeGasUsed);
     }
 
-    public String getCumulativeGasUsedRaw() {
-        return cumulativeGasUsed;
-    }
-
     public void setCumulativeGasUsed(String cumulativeGasUsed) {
         this.cumulativeGasUsed = cumulativeGasUsed;
+    }
+
+    public String getCumulativeGasUsedRaw() {
+        return cumulativeGasUsed;
     }
 
     public BigInteger getGasUsed() {
         return Numeric.decodeQuantity(gasUsed);
     }
 
-    public String getGasUsedRaw() {
-        return gasUsed;
-    }
-
     public void setGasUsed(String gasUsed) {
         this.gasUsed = gasUsed;
+    }
+
+    public String getGasUsedRaw() {
+        return gasUsed;
     }
 
     public String getContractAddress() {

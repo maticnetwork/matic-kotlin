@@ -16,14 +16,6 @@ public class Credentials {
         this.address = address;
     }
 
-    public ECKeyPair getEcKeyPair() {
-        return ecKeyPair;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
     public static Credentials create(ECKeyPair ecKeyPair) {
         String address = Numeric.prependHexPrefix(Keys.getAddress(ecKeyPair));
         return new Credentials(ecKeyPair, address);
@@ -35,6 +27,14 @@ public class Credentials {
 
     public static Credentials create(String privateKey) {
         return create(ECKeyPair.create(Numeric.toBigInt(privateKey)));
+    }
+
+    public ECKeyPair getEcKeyPair() {
+        return ecKeyPair;
+    }
+
+    public String getAddress() {
+        return address;
     }
 
     @Override

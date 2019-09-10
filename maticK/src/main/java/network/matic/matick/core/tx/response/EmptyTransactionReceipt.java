@@ -38,12 +38,12 @@ public class EmptyTransactionReceipt extends TransactionReceipt {
     }
 
     @Override
-    public String getTransactionIndexRaw() {
+    public void setTransactionIndex(String transactionIndex) {
         throw unsupportedOperation();
     }
 
     @Override
-    public void setTransactionIndex(String transactionIndex) {
+    public String getTransactionIndexRaw() {
         throw unsupportedOperation();
     }
 
@@ -63,12 +63,12 @@ public class EmptyTransactionReceipt extends TransactionReceipt {
     }
 
     @Override
-    public String getBlockNumberRaw() {
+    public void setBlockNumber(String blockNumber) {
         throw unsupportedOperation();
     }
 
     @Override
-    public void setBlockNumber(String blockNumber) {
+    public String getBlockNumberRaw() {
         throw unsupportedOperation();
     }
 
@@ -78,12 +78,12 @@ public class EmptyTransactionReceipt extends TransactionReceipt {
     }
 
     @Override
-    public String getCumulativeGasUsedRaw() {
+    public void setCumulativeGasUsed(String cumulativeGasUsed) {
         throw unsupportedOperation();
     }
 
     @Override
-    public void setCumulativeGasUsed(String cumulativeGasUsed) {
+    public String getCumulativeGasUsedRaw() {
         throw unsupportedOperation();
     }
 
@@ -93,12 +93,12 @@ public class EmptyTransactionReceipt extends TransactionReceipt {
     }
 
     @Override
-    public String getGasUsedRaw() {
+    public void setGasUsed(String gasUsed) {
         throw unsupportedOperation();
     }
 
     @Override
-    public void setGasUsed(String gasUsed) {
+    public String getGasUsedRaw() {
         throw unsupportedOperation();
     }
 

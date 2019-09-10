@@ -28,11 +28,6 @@ public class DynamicArray<T extends Type> extends Array<T> {
         super((Class<T>) AbiTypes.getType(type));
     }
 
-    @Deprecated
-    public static DynamicArray empty(String type) {
-        return new DynamicArray(type);
-    }
-
     public DynamicArray(Class<T> type, List<T> values) {
         super(type, values);
     }
@@ -40,6 +35,11 @@ public class DynamicArray<T extends Type> extends Array<T> {
     @SafeVarargs
     public DynamicArray(Class<T> type, T... values) {
         super(type, values);
+    }
+
+    @Deprecated
+    public static DynamicArray empty(String type) {
+        return new DynamicArray(type);
     }
 
     @Override

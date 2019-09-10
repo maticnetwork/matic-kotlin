@@ -1,7 +1,6 @@
-package network.matic.matick;
+package network.matic.maticsdkkotlin
 
-
-object ConfigUtils {
+object ConfigTest {
     const val publicKey = "0x7eD7f36694153bA6EfF6ca6726b60F6E2Bb17fcf"
     const val privateKey = "A5F9C331D6C628B9C3D6DB78BDA1266781F505A18D953409931B83798EF5AB1F"
     const val recipientAddress = "0x6175a8B6cEbF1Cd04F7Fe5705e6c9123aD971E1E"

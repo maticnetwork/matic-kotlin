@@ -28,9 +28,8 @@ import network.matic.matick.utils.utils.Numeric;
  */
 public class RawTransactionManager extends TransactionManager {
 
-    private final Web3j web3j;
     final Credentials credentials;
-
+    private final Web3j web3j;
     private final long chainId;
 
     protected TxHashVerifier txHashVerifier = new TxHashVerifier();

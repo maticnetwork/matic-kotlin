@@ -83,7 +83,9 @@ import network.matic.matick.core.protocol.websocket.events.NewHeadsNotification;
 import network.matic.matick.core.utils.Async;
 import network.matic.matick.utils.utils.Numeric;
 
-/** JSON-RPC 2.0 factory implementation. */
+/**
+ * JSON-RPC 2.0 factory implementation.
+ */
 public class JsonRpc2_0Web3j implements Web3j {
 
     public static final int DEFAULT_BLOCK_TIME = 15 * 1000;

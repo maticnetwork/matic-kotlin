@@ -78,36 +78,36 @@ public class ShhMessages extends Response<List<ShhMessages.SshMessage>> {
             return Numeric.decodeQuantity(expiry);
         }
 
-        public String getExpiryRaw() {
-            return expiry;
-        }
-
         public void setExpiry(String expiry) {
             this.expiry = expiry;
+        }
+
+        public String getExpiryRaw() {
+            return expiry;
         }
 
         public BigInteger getTtl() {
             return Numeric.decodeQuantity(ttl);
         }
 
-        public String getTtlRaw() {
-            return ttl;
-        }
-
         public void setTtl(String ttl) {
             this.ttl = ttl;
+        }
+
+        public String getTtlRaw() {
+            return ttl;
         }
 
         public BigInteger getSent() {
             return Numeric.decodeQuantity(sent);
         }
 
-        public String getSentRaw() {
-            return sent;
-        }
-
         public void setSent(String sent) {
             this.sent = sent;
+        }
+
+        public String getSentRaw() {
+            return sent;
         }
 
         public List<String> getTopics() {
@@ -130,12 +130,12 @@ public class ShhMessages extends Response<List<ShhMessages.SshMessage>> {
             return Numeric.decodeQuantity(workProved);
         }
 
-        public String getWorkProvedRaw() {
-            return workProved;
-        }
-
         public void setWorkProved(String workProved) {
             this.workProved = workProved;
+        }
+
+        public String getWorkProvedRaw() {
+            return workProved;
         }
 
         @Override

@@ -54,24 +54,24 @@ public class Log {
         return convert(logIndex);
     }
 
-    public String getLogIndexRaw() {
-        return logIndex;
-    }
-
     public void setLogIndex(String logIndex) {
         this.logIndex = logIndex;
+    }
+
+    public String getLogIndexRaw() {
+        return logIndex;
     }
 
     public BigInteger getTransactionIndex() {
         return convert(transactionIndex);
     }
 
-    public String getTransactionIndexRaw() {
-        return transactionIndex;
-    }
-
     public void setTransactionIndex(String transactionIndex) {
         this.transactionIndex = transactionIndex;
+    }
+
+    public String getTransactionIndexRaw() {
+        return transactionIndex;
     }
 
     public String getTransactionHash() {
@@ -94,12 +94,12 @@ public class Log {
         return convert(blockNumber);
     }
 
-    public String getBlockNumberRaw() {
-        return blockNumber;
-    }
-
     public void setBlockNumber(String blockNumber) {
         this.blockNumber = blockNumber;
+    }
+
+    public String getBlockNumberRaw() {
+        return blockNumber;
     }
 
     public String getAddress() {

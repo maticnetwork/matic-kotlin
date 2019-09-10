@@ -46,11 +46,9 @@ import network.matic.matick.core.protocol.websocket.events.Notification;
  */
 public class WebSocketService implements Web3jService {
 
-    private static final Logger log = LoggerFactory.getLogger(WebSocketService.class);
-
     // Timeout for JSON-RPC requests
     static final long REQUEST_TIMEOUT = 60;
-
+    private static final Logger log = LoggerFactory.getLogger(WebSocketService.class);
     // WebSocket client
     private final WebSocketClient webSocketClient;
     // Executor to schedule request timeouts
@@ -82,6 +80,14 @@ public class WebSocketService implements Web3jService {
         this.webSocketClient = webSocketClient;
         this.executor = executor;
         this.objectMapper = ObjectMapperFactory.getObjectMapper(includeRawResponses);
+    }
+
+    private static URI parseURI(String serverUrl) {
+        try {
+            return new URI(serverUrl);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(String.format("Failed to parse URL: '%s'", serverUrl), e);
+        }
     }
 
     /**
@@ -124,7 +130,6 @@ public class WebSocketService implements Web3jService {
             }
         });
     }
-
 
     @Override
     public <T extends Response> T send(Request request, Class<T> responseType) throws IOException {
@@ -338,14 +343,6 @@ public class WebSocketService implements Web3jService {
         }
 
         return idField.longValue();
-    }
-
-    private static URI parseURI(String serverUrl) {
-        try {
-            return new URI(serverUrl);
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(String.format("Failed to parse URL: '%s'", serverUrl), e);
-        }
     }
 
     @Override
