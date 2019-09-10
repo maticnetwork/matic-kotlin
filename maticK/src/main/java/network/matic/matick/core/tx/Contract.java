@@ -525,6 +525,28 @@ public abstract class Contract extends ManagedTransaction {
 
     }
 
+    /**
+     * Create raw transaction to fix eth_sendTransaction not found error
+     */
+    RawTransaction createRawTransaction(String data, BigInteger value, String funcName) throws IOException {
+        System.out.println(transactionManager.getFromAddress());
+
+        BigInteger nonce = web3j.ethGetTransactionCount(transactionManager.getFromAddress(),
+                DefaultBlockParameterName.PENDING)
+                .send().getTransactionCount();
+
+        System.out.println(nonce);
+
+        return RawTransaction.createTransaction(
+                nonce,
+                gasProvider.getGasPrice(funcName),
+                BigInteger.valueOf(67000),
+                contractAddress,
+                value,
+                data
+        );
+    }
+
     protected <T extends Type> RemoteCall<T> executeRemoteCallSingleValueReturn(Function function) {
         return new RemoteCall<>(() -> executeCallSingleValueReturn(function));
     }
