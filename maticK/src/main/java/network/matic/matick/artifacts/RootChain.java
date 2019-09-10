@@ -301,6 +301,20 @@ public class RootChain extends Contract {
         return responses;
     }
 
+    public Flowable<ChildChainChangedEventResponse> childChainChangedEventFlowable(EthFilter filter) {
+        return web3j.ethLogFlowable(filter).map(new io.reactivex.functions.Function<Log, ChildChainChangedEventResponse>() {
+            @Override
+            public ChildChainChangedEventResponse apply(Log log) {
+                Contract.EventValuesWithLog eventValues = extractEventParametersWithLog(CHILDCHAINCHANGED_EVENT, log);
+                ChildChainChangedEventResponse typedResponse = new ChildChainChangedEventResponse();
+                typedResponse.log = log;
+                typedResponse.previousChildChain = (String) eventValues.getIndexedValues().get(0).getValue();
+                typedResponse.newChildChain = (String) eventValues.getIndexedValues().get(1).getValue();
+                return typedResponse;
+            }
+        });
+    }
+
     public Flowable<ChildChainChangedEventResponse> childChainChangedEventFlowable(DefaultBlockParameter startBlock, DefaultBlockParameter endBlock) {
         EthFilter filter = new EthFilter(startBlock, endBlock, getContractAddress());
         filter.addSingleTopic(EventEncoder.encode(CHILDCHAINCHANGED_EVENT));
@@ -320,6 +334,20 @@ public class RootChain extends Contract {
         return responses;
     }
 
+    public Flowable<ProofValidatorAddedEventResponse> proofValidatorAddedEventFlowable(EthFilter filter) {
+        return web3j.ethLogFlowable(filter).map(new io.reactivex.functions.Function<Log, ProofValidatorAddedEventResponse>() {
+            @Override
+            public ProofValidatorAddedEventResponse apply(Log log) {
+                Contract.EventValuesWithLog eventValues = extractEventParametersWithLog(PROOFVALIDATORADDED_EVENT, log);
+                ProofValidatorAddedEventResponse typedResponse = new ProofValidatorAddedEventResponse();
+                typedResponse.log = log;
+                typedResponse.validator = (String) eventValues.getIndexedValues().get(0).getValue();
+                typedResponse.from = (String) eventValues.getIndexedValues().get(1).getValue();
+                return typedResponse;
+            }
+        });
+    }
+
     public Flowable<ProofValidatorAddedEventResponse> proofValidatorAddedEventFlowable(DefaultBlockParameter startBlock, DefaultBlockParameter endBlock) {
         EthFilter filter = new EthFilter(startBlock, endBlock, getContractAddress());
         filter.addSingleTopic(EventEncoder.encode(PROOFVALIDATORADDED_EVENT));
@@ -337,6 +365,20 @@ public class RootChain extends Contract {
             responses.add(typedResponse);
         }
         return responses;
+    }
+
+    public Flowable<ProofValidatorRemovedEventResponse> proofValidatorRemovedEventFlowable(EthFilter filter) {
+        return web3j.ethLogFlowable(filter).map(new io.reactivex.functions.Function<Log, ProofValidatorRemovedEventResponse>() {
+            @Override
+            public ProofValidatorRemovedEventResponse apply(Log log) {
+                Contract.EventValuesWithLog eventValues = extractEventParametersWithLog(PROOFVALIDATORREMOVED_EVENT, log);
+                ProofValidatorRemovedEventResponse typedResponse = new ProofValidatorRemovedEventResponse();
+                typedResponse.log = log;
+                typedResponse.validator = (String) eventValues.getIndexedValues().get(0).getValue();
+                typedResponse.from = (String) eventValues.getIndexedValues().get(1).getValue();
+                return typedResponse;
+            }
+        });
     }
 
     public Flowable<ProofValidatorRemovedEventResponse> proofValidatorRemovedEventFlowable(DefaultBlockParameter startBlock, DefaultBlockParameter endBlock) {
@@ -361,6 +403,23 @@ public class RootChain extends Contract {
         return responses;
     }
 
+    public Flowable<NewHeaderBlockEventResponse> newHeaderBlockEventFlowable(EthFilter filter) {
+        return web3j.ethLogFlowable(filter).map(new io.reactivex.functions.Function<Log, NewHeaderBlockEventResponse>() {
+            @Override
+            public NewHeaderBlockEventResponse apply(Log log) {
+                Contract.EventValuesWithLog eventValues = extractEventParametersWithLog(NEWHEADERBLOCK_EVENT, log);
+                NewHeaderBlockEventResponse typedResponse = new NewHeaderBlockEventResponse();
+                typedResponse.log = log;
+                typedResponse.proposer = (String) eventValues.getIndexedValues().get(0).getValue();
+                typedResponse.number = (BigInteger) eventValues.getIndexedValues().get(1).getValue();
+                typedResponse.start = (BigInteger) eventValues.getNonIndexedValues().get(0).getValue();
+                typedResponse.end = (BigInteger) eventValues.getNonIndexedValues().get(1).getValue();
+                typedResponse.root = (byte[]) eventValues.getNonIndexedValues().get(2).getValue();
+                return typedResponse;
+            }
+        });
+    }
+
     public Flowable<NewHeaderBlockEventResponse> newHeaderBlockEventFlowable(DefaultBlockParameter startBlock, DefaultBlockParameter endBlock) {
         EthFilter filter = new EthFilter(startBlock, endBlock, getContractAddress());
         filter.addSingleTopic(EventEncoder.encode(NEWHEADERBLOCK_EVENT));
@@ -378,6 +437,20 @@ public class RootChain extends Contract {
             responses.add(typedResponse);
         }
         return responses;
+    }
+
+    public Flowable<OwnershipTransferredEventResponse> ownershipTransferredEventFlowable(EthFilter filter) {
+        return web3j.ethLogFlowable(filter).map(new io.reactivex.functions.Function<Log, OwnershipTransferredEventResponse>() {
+            @Override
+            public OwnershipTransferredEventResponse apply(Log log) {
+                Contract.EventValuesWithLog eventValues = extractEventParametersWithLog(OWNERSHIPTRANSFERRED_EVENT, log);
+                OwnershipTransferredEventResponse typedResponse = new OwnershipTransferredEventResponse();
+                typedResponse.log = log;
+                typedResponse.previousOwner = (String) eventValues.getIndexedValues().get(0).getValue();
+                typedResponse.newOwner = (String) eventValues.getIndexedValues().get(1).getValue();
+                return typedResponse;
+            }
+        });
     }
 
     public Flowable<OwnershipTransferredEventResponse> ownershipTransferredEventFlowable(DefaultBlockParameter startBlock, DefaultBlockParameter endBlock) {
