@@ -386,11 +386,9 @@ public abstract class Contract extends ManagedTransaction {
      * Create raw transaction to fix eth_sendTransaction not found error
      */
     RawTransaction createRawTransaction(String data, String funcName) throws IOException {
-        System.out.println(transactionManager.getFromAddress());
         BigInteger nonce = web3j.ethGetTransactionCount(transactionManager.getFromAddress(),
                 DefaultBlockParameterName.LATEST)
                 .send().getTransactionCount();
-        System.out.println(nonce);
          BigInteger gasLimit = web3j.ethEstimateGas(Transaction.createEthCallTransaction(
                 transactionManager.getFromAddress(),
                 contractAddress,
@@ -407,8 +405,6 @@ public abstract class Contract extends ManagedTransaction {
      * Create raw transaction to fix eth_sendTransaction not found error
      */
     RawTransaction createRawTransaction(String data, BigInteger value, String funcName) throws IOException {
-        System.out.println(transactionManager.getFromAddress());
-
         BigInteger nonce = web3j.ethGetTransactionCount(transactionManager.getFromAddress(),
                 DefaultBlockParameterName.PENDING)
                 .send().getTransactionCount();

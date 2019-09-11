@@ -17,14 +17,29 @@ import network.matic.matick.core.protocol.http.HttpService
 import network.matic.matick.core.tx.gas.ContractGasProvider
 import network.matic.matick.crypto.Credentials
 import network.matic.matick.crypto.TransactionEncoder
+import network.matic.matick.model.Header
 import network.matic.matick.model.TransactionModel
 import network.matic.matick.model.TxProofModel
 import network.matic.matick.model.WatcherModel
 import network.matic.matick.utils.utils.Numeric
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.math.BigInteger
+import java.io.ByteArrayInputStream
+import java.io.ObjectInputStream
+import java.io.ByteArrayOutputStream
+import java.io.ObjectOutputStream
+import retrofit2.adapter.rxjava2.Result.response
+import network.matic.matick.core.protocol.core.methods.response.EthGetTransactionCount
+import network.matic.matick.core.protocol.core.methods.response.EthGetBalance
+import network.matic.matick.rlp.RlpEncoder
+import network.matic.matick.rlp.RlpList
+import network.matic.matick.rlp.RlpString
+import network.matic.matick.rlp.RlpType
+import okhttp3.internal.concat
+import java.util.ArrayList
+import kotlin.experimental.and
+
+
+private val hexArray = "0123456789ABCDEF".toCharArray()
 
 
 //internal class ConfigUtils(
@@ -425,36 +440,17 @@ class Matick {
             }
     }
 
-    fun getTx(txHash: String) {
-        println("here ${txHash}")
-        SyncerApiFactory.getRetrofitInstance().getTransaction(txHash)
-            .enqueue(object : Callback<TransactionModel> {
-                override fun onFailure(call: Call<TransactionModel>, t: Throwable) {
-                    println("error ${t.message}")
-                }
-
-                override fun onResponse(
-                    call: Call<TransactionModel>,
-                    response: Response<TransactionModel>
-                ) {
-                    println("response ${response.body()}")
-                }
-
-            })
+    fun getTx(txHash: String): Single<TransactionModel> {
+        return SyncerApiFactory.getRetrofitInstance().getTransaction(txHash)
+            .subscribeOn(Schedulers.io())
 
     }
 
-//    fun getReceipt(txHash: String) {
-//        SyncerApiFactory.instance.getTransactionReceipt(txHash).enqueue(object : Callback<TransactionModel>{
-//            override fun onFailure(call: Call<TransactionModel>, t: Throwable) {
-//                println(t.message)
-//            }
-//
-//            override fun onResponse(call: Call<TransactionModel>, response: Response<TransactionModel>) {
-//                println("response ${response.body()}")
-//            }
-//        })
-//    }
+    fun getReceipt(txHash: String): Single<TransactionModel> {
+        return SyncerApiFactory.getRetrofitInstance().getTransactionReceipt(txHash)
+            .subscribeOn(Schedulers.io())
+
+    }
 
     fun getTxProof(txHash: String): Single<TxProofModel> {
         return SyncerApiFactory.getRetrofitInstance().getTxProof(txHash)
@@ -482,50 +478,105 @@ class Matick {
             .subscribeOn(Schedulers.io())
     }
 
-//
-//    fun getHeaderProof(blockNumber: String) {
-//        SyncerApiFactory.instance.getTransaction("${ConfigUtils.SYNCER_URL}/block/${blockNumber}/proof").enqueue(object : Callback<TransactionModel>{
-//            override fun onFailure(call: Call<TransactionModel>, t: Throwable) {
-//                println(t.message)
-//            }
-//
-//            override fun onResponse(call: Call<TransactionModel>, response: Response<TransactionModel>) {
-//                println("response ${response.body()}")
-//            }
-//        })
-//    }
+    fun getHeaderProof(blockNumber: String, start: String, end: String): Single<Header> {
+        return SyncerApiFactory.getRetrofitInstance().getHeaderProof(blockNumber, start, end)
+            .subscribeOn(Schedulers.io())
+    }
 
     fun verifyHeaderProof() {
 
     }
 
+    fun bytesToHex(bytes: ByteArray): String {
+        val hexChars = CharArray(bytes.size * 2)
+        for (j in bytes.indices) {
+            val v = (bytes[j] and 0xFF.toByte()).toInt()
+            hexChars[j * 2] = hexArray[v ushr 4]
+            hexChars[j * 2 + 1] = hexArray[v and 0x0F]
+        }
+        return String(hexChars)
+    }
+
+    fun hexToBytes(str: String) : ByteArray {
+        val result = ByteArray(str.length / 2)
+        for (i in 0 until str.length step 2) {
+            val firstIndex = hexArray.indexOf(str[i]);
+            val secondIndex = hexArray.indexOf(str[i + 1]);
+            val octet = firstIndex.shl(4).or(secondIndex)
+            result.set(i.shr(1), octet.toByte())
+        }
+        return result
+    }
+
     fun withdraw(contractAddress: String, txHash: String, parent: Boolean = true) {
         var txProof = getTxProof(txHash)
-        println("${txProof.blockingGet().proof.blockNumber}")
         var receiptProof = getReceiptProof(txHash)
-        println("${receiptProof.blockingGet()}")
-
-
         var header = getHeaderObject(txProof.blockingGet().proof.blockNumber)
-        println("header ${header.blockingGet()}")
-//        val tx = TxProofModel
-//        loadWithdrawMangerContract(contractAddress, parent).flatMapSingle {
-//            it.withdrawBurntTokens(
-//                BigInteger.valueOf(header.number),
-//                header,
-//                BigInteger.valueOf(txProof.blockNumber),
-//                BigInteger.valueOf(txProof.blockTimestamp),
-//
-//            )
-//        }.map {
-//                val signedTransaction = TransactionEncoder.signMessage(
-//                    it, Credentials.create(
-//                        ConfigUtils.privateKey
-//                    )
+
+        var headerProof = getHeaderProof(
+            txProof.blockingGet().proof.blockNumber,
+            header.blockingGet().start,
+            header.blockingGet().end
+        )
+
+        var d = headerProof.blockingGet().proof.proof.joinToString("").replace("0x", "")
+
+        val sPath = receiptProof.blockingGet().proof.path
+
+        val values = ArrayList<RlpType>()
+        values.add(RlpString.create(sPath))
+
+        val rlpList = RlpList(values)
+
+        val encoderRlp = RlpEncoder.encode(rlpList)
+
+
+
+
+
+        // println("headerProof ${headerProof.blockingGet()}")
+        // println("1->>>> ${BigInteger.valueOf(header.blockingGet().number.toLong())}")
+        // println("2->>>> ${hexToBytes(d)}")
+        // println("3->>>> ${BigInteger.valueOf(txProof.blockingGet().proof.blockNumber.toLong())}")
+        // println("4->>>> ${BigInteger.valueOf(txProof.blockingGet().proof.blockTimestamp.toLong())}")
+        // println("5->>>> ${txProof.blockingGet().proof.root}")
+        // println("6->>>> ${receiptProof.blockingGet().proof.root.toByteArray()}")
+        // println("7->>>> ${encoderRlp}")
+        // println("8->>>> ${txProof.blockingGet().proof.value.toByteArray()}")
+        // println("9->>>> ${txProof.blockingGet().proof.parentNodes.toByteArray()}")
+        // println("10->>>> ${receiptProof.blockingGet().proof.value.toByteArray()}")
+        // println("11->>>> ${receiptProof.blockingGet().proof.parentNodes.toByteArray()}")
+
+        loadWithdrawMangerContract(contractAddress, parent).flatMapSingle {
+            it.withdrawBurntTokens(
+                BigInteger.valueOf(header.blockingGet().number.toLong()),
+                hexToBytes(d),
+                BigInteger.valueOf(txProof.blockingGet().proof.blockNumber.toLong()),
+                BigInteger.valueOf(txProof.blockingGet().proof.blockTimestamp.toLong()),
+                txProof.blockingGet().proof.root.toByteArray(),
+                receiptProof.blockingGet().proof.root.toByteArray(),
+                encoderRlp,
+                txProof.blockingGet().proof.value.toByteArray(),
+                txProof.blockingGet().proof.parentNodes.toByteArray(),
+                receiptProof.blockingGet().proof.value.toByteArray(),
+                receiptProof.blockingGet().proof.parentNodes.toByteArray()
+            )
+        }.map {
+            println("raw tx ${it}")
+//            val signedTransaction = TransactionEncoder.signMessage(
+//                it, Credentials.create(
+//                    ConfigUtils.privateKey
 //                )
-//                val hexValue = Numeric.toHexString(signedTransaction)
-//                web3j.ethSendRawTransaction(hexValue).send()
-//            }
+//            )
+//            val hexValue = Numeric.toHexString(signedTransaction)
+//            web3j.ethSendRawTransaction(hexValue).send()
+        }.subscribeOn(Schedulers.io())
+            .subscribe({
+                println(it)
+            },{
+                print("errr")
+                it.printStackTrace()
+            })
     }
 
     fun processExits(contractAddress: String, parent: Boolean = true) {

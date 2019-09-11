@@ -9,5 +9,6 @@ data class Proof(
     @SerializedName("parentNodes") val parentNodes: String,
     @SerializedName("root") val root: String,
     @SerializedName("path") val path: String,
-    @SerializedName("value") val value: String
+    @SerializedName("value") val value: String,
+    @SerializedName("blockTimestamp") val blockTimestamp: String
 )

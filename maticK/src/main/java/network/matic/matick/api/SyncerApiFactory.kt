@@ -17,7 +17,6 @@ object SyncerApiFactory {
     private val okHttpClient = OkHttpClient.Builder()
         .addInterceptor { chain ->
             val original = chain.request()
-            println(original)
             val requestBuilder = original.newBuilder()
                 .method(original.method, original.body)
 
