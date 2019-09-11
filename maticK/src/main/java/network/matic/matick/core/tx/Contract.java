@@ -39,7 +39,6 @@ import network.matic.matick.core.protocol.core.DefaultBlockParameter;
 import network.matic.matick.core.protocol.core.DefaultBlockParameterName;
 import network.matic.matick.core.protocol.core.RemoteCall;
 import network.matic.matick.core.protocol.core.methods.request.Transaction;
-import network.matic.matick.core.protocol.core.methods.response.EthEstimateGas;
 import network.matic.matick.core.protocol.core.RemoteFunctionCall;
 import network.matic.matick.core.protocol.core.methods.response.EthGetCode;
 import network.matic.matick.core.protocol.core.methods.response.Log;
