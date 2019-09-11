@@ -35,13 +35,13 @@ object TestMaticK {
 //            it.printStackTrace()
 //        })
 
-//        matick.transferTokens(ConfigTest.FROM_ADDRESS, ConfigTest.MATIC_TEST_TOKEN, BigInteger.valueOf(100000000000000000), false)
-//            .subscribeOn(Schedulers.io())
-//            .subscribe({
-//                println("hello it ${it.transactionHash}")
-//            },{
-//                it.printStackTrace()
-//            })
+        matick.transferTokens(ConfigTest.FROM_ADDRESS, ConfigTest.MATIC_TEST_TOKEN, BigInteger.valueOf(100000000000000000), false)
+            .subscribeOn(Schedulers.io())
+            .subscribe({
+                println("hello it ${it.transactionHash}")
+            },{
+                it.printStackTrace()
+            })
 
 //        matick.startWithdraw(
 //            ConfigTest.MATIC_TEST_TOKEN,
@@ -88,7 +88,11 @@ object TestMaticK {
 //                it.printStackTrace()
 //            })
 
-        matick.getTx("0xc79e89838582267224b4bb6491661b12dffdd0cf0fdc65c71bfb104dac532d56")
-//        matick.getReceipt("0xc79e89838582267224b4bb6491661b12dffdd0cf0fdc65c71bfb104dac532d56")
+//        matick.getTx("0xc79e89838582267224b4bb6491661b12dffdd0cf0fdc65c71bfb104dac532d56")
+//        matick.getTxProof("0xc79e89838582267224b4bb6491661b12dffdd0cf0fdc65c71bfb104dac532d56")
+//        matick.getReceiptProof("0xc79e89838582267224b4bb6491661b12dffdd0cf0fdc65c71bfb104dac532d56")
+//        matick.withdraw( ConfigTest.WITHDRAWMANAGER_ADDRESS,"0xc79e89838582267224b4bb6491661b12dffdd0cf0fdc65c71bfb104dac532d56")
+
     }
+
 }

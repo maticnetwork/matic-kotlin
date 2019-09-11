@@ -27,6 +27,8 @@ import network.matic.matick.core.protocol.Web3j;
 import network.matic.matick.core.protocol.core.DefaultBlockParameter;
 import network.matic.matick.core.protocol.core.DefaultBlockParameterName;
 import network.matic.matick.core.protocol.core.RemoteCall;
+import network.matic.matick.core.protocol.core.methods.request.Transaction;
+import network.matic.matick.core.protocol.core.methods.response.EthEstimateGas;
 import network.matic.matick.core.protocol.core.methods.response.EthGetCode;
 import network.matic.matick.core.protocol.core.methods.response.Log;
 import network.matic.matick.core.protocol.core.methods.response.TransactionReceipt;
@@ -495,9 +497,16 @@ public abstract class Contract extends ManagedTransaction {
     TransactionReceipt executeTransaction(
             String data, BigInteger weiValue, String funcName)
             throws TransactionException, IOException {
+        BigInteger gasLimit = web3j.ethEstimateGas(Transaction.createEthCallTransaction(
+                transactionManager.getFromAddress(),
+                contractAddress,
+                data
+                )
+        ).send().getAmountUsed();
         TransactionReceipt receipt = send(contractAddress, data, weiValue,
                 gasProvider.getGasPrice(funcName),
-                gasProvider.getGasLimit(funcName));
+                gasLimit
+        );
 
         if (!receipt.isStatusOK()) {
             throw new TransactionException(
@@ -520,8 +529,15 @@ public abstract class Contract extends ManagedTransaction {
                 DefaultBlockParameterName.LATEST)
                 .send().getTransactionCount();
         System.out.println(nonce);
+         BigInteger gasLimit = web3j.ethEstimateGas(Transaction.createEthCallTransaction(
+                transactionManager.getFromAddress(),
+                contractAddress,
+                data
+            )
+        ).send().getAmountUsed();
+
         return RawTransaction.createTransaction(nonce, gasProvider.getGasPrice(funcName),
-                BigInteger.valueOf(67000), contractAddress, data);
+                gasLimit, contractAddress, data);
 
     }
 
@@ -535,12 +551,17 @@ public abstract class Contract extends ManagedTransaction {
                 DefaultBlockParameterName.PENDING)
                 .send().getTransactionCount();
 
-        System.out.println(nonce);
+        BigInteger gasLimit = web3j.ethEstimateGas(Transaction.createEthCallTransaction(
+                transactionManager.getFromAddress(),
+                contractAddress,
+                data
+                )
+        ).send().getAmountUsed();
 
         return RawTransaction.createTransaction(
                 nonce,
                 gasProvider.getGasPrice(funcName),
-                BigInteger.valueOf(67000),
+                gasLimit,
                 contractAddress,
                 value,
                 data

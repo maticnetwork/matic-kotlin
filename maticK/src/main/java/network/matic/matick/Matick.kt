@@ -1,8 +1,11 @@
 package network.matic.matick
 
 import io.reactivex.Flowable
+import io.reactivex.Single
 import io.reactivex.functions.BiFunction
-import network.matic.matick.api.ApiClient
+import io.reactivex.schedulers.Schedulers
+import network.matic.matick.api.SyncerApiFactory
+import network.matic.matick.api.WatcherApiFactory
 import network.matic.matick.artifacts.*
 import network.matic.matick.core.protocol.Web3j
 import network.matic.matick.core.protocol.core.DefaultBlockParameterName
@@ -14,6 +17,8 @@ import network.matic.matick.core.protocol.http.HttpService
 import network.matic.matick.core.tx.gas.ContractGasProvider
 import network.matic.matick.crypto.Credentials
 import network.matic.matick.model.TransactionModel
+import network.matic.matick.model.TxProofModel
+import network.matic.matick.model.WatcherModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -62,12 +67,6 @@ class Matick {
         depositManagerAddress = ConfigUtils.DEPOSITMANAGER_ADDRESS
     }
 
-
-    fun contract(): String {
-        println("welcome to contract")
-        return ("welcome sayla")
-    }
-
     fun loadERC20Contract(contractAddress: String, parent: Boolean): Flowable<ChildERC20> {
 
         return getGasPrice().zipWith(
@@ -81,7 +80,7 @@ class Matick {
                 contractAddress,
                 if (parent) web3jParent else web3j,
                 Credentials.create(ConfigUtils.PRIVATE_KEY),
-                CustomContractGasProvider(it.ethGasPrice, BigInteger.valueOf(67000))
+                CustomContractGasProvider(it.ethGasPrice, BigInteger.ZERO)
             )
         }
     }
@@ -94,12 +93,11 @@ class Matick {
                 GasObject(gasPrice.gasPrice, gasLimit.amountUsed)
             }
         ).map {
-            println("gas ${it.ethEstimateGas}")
             ChildERC721.load(
                 contractAddress,
                 if (parent) web3jParent else web3j,
                 Credentials.create(ConfigUtils.PRIVATE_KEY),
-                CustomContractGasProvider(it.ethGasPrice, BigInteger.valueOf(67000))
+                CustomContractGasProvider(it.ethGasPrice, BigInteger.ZERO)
             )
         }
     }
@@ -117,7 +115,7 @@ class Matick {
                 contractAddress,
                 if (parent) web3jParent else web3j,
                 Credentials.create(ConfigUtils.PRIVATE_KEY),
-                CustomContractGasProvider(it.ethGasPrice, BigInteger.valueOf(67000))
+                CustomContractGasProvider(it.ethGasPrice, BigInteger.ZERO)
             )
         }
     }
@@ -138,7 +136,7 @@ class Matick {
                 contractAddress,
                 if (parent) web3jParent else web3j,
                 Credentials.create(ConfigUtils.PRIVATE_KEY),
-                CustomContractGasProvider(it.ethGasPrice, BigInteger.valueOf(67000))
+                CustomContractGasProvider(it.ethGasPrice, BigInteger.ZERO)
             )
         }
     }
@@ -159,7 +157,7 @@ class Matick {
                 contractAddress,
                 if (parent) web3jParent else web3j,
                 Credentials.create(ConfigUtils.PRIVATE_KEY),
-                CustomContractGasProvider(it.ethGasPrice, BigInteger.valueOf(67000))
+                CustomContractGasProvider(it.ethGasPrice, BigInteger.ZERO)
             )
         }
     }
@@ -180,7 +178,7 @@ class Matick {
                 contractAddress,
                 if (parent) web3jParent else web3j,
                 Credentials.create(ConfigUtils.PRIVATE_KEY),
-                CustomContractGasProvider(it.ethGasPrice, BigInteger.valueOf(67000))
+                CustomContractGasProvider(it.ethGasPrice, BigInteger.ZERO)
             )
         }
     }
@@ -193,11 +191,11 @@ class Matick {
     fun getGasPrice() = web3jParent.ethGasPrice().flowable()
 
 
-    fun estimateGasLimit() = web3j.ethEstimateGas(
+    fun estimateGasLimit(data: String = "0x") = web3j.ethEstimateGas(
         Transaction.createEthCallTransaction(
             ConfigUtils.FROM_ADDRESS,
             ConfigUtils.recipientAddress,
-            "0xAb61728dbcB2ceb2BEC355472fA17A15A661125D"
+            data
         )
     ).flowable()
 
@@ -368,7 +366,7 @@ class Matick {
 
     fun getTx(txHash: String) {
         println("here ${txHash}")
-        ApiClient.instance.getTransaction(txHash).enqueue(object : Callback<TransactionModel> {
+        SyncerApiFactory.getRetrofitInstance().getTransaction(txHash).enqueue(object : Callback<TransactionModel> {
             override fun onFailure(call: Call<TransactionModel>, t: Throwable) {
                 println("error ${t.message}")
             }
@@ -384,32 +382,8 @@ class Matick {
 
     }
 
-    fun getReceipt(txHash: String) {
-        ApiClient.instance.getTransactionReceipt(txHash).enqueue(object : Callback<TransactionModel>{
-            override fun onFailure(call: Call<TransactionModel>, t: Throwable) {
-                println(t.message)
-            }
-
-            override fun onResponse(call: Call<TransactionModel>, response: Response<TransactionModel>) {
-                println("response ${response.body()}")
-            }
-        })
-    }
-
-    fun getTxProof(txHash: String) {
-        ApiClient.instance.getTransaction("https://matic-syncer2.api.matic.network/api/v1/tx/${txHash}/proof/").enqueue(object : Callback<TransactionModel>{
-            override fun onFailure(call: Call<TransactionModel>, t: Throwable) {
-                println(t.message)
-            }
-
-            override fun onResponse(call: Call<TransactionModel>, response: Response<TransactionModel>) {
-                println("response ${response.body()}")
-            }
-        })
-    }
-
-    fun verifyTxProof(txHash: String) {
-//        ApiClient.instance.getTransaction("https://matic-syncer2.api.matic.network/api/v1/tx/${txHash}/").enqueue(object : Callback<TransactionModel>{
+//    fun getReceipt(txHash: String) {
+//        SyncerApiFactory.instance.getTransactionReceipt(txHash).enqueue(object : Callback<TransactionModel>{
 //            override fun onFailure(call: Call<TransactionModel>, t: Throwable) {
 //                println(t.message)
 //            }
@@ -418,54 +392,69 @@ class Matick {
 //                println("response ${response.body()}")
 //            }
 //        })
+//    }
+
+    fun getTxProof(txHash: String): Single<TxProofModel> {
+        return SyncerApiFactory.getRetrofitInstance().getTxProof(txHash)
+            .subscribeOn(Schedulers.io())
     }
 
-    fun getReceiptProof(txHash: String) {
-        ApiClient.instance.getTransaction("https://matic-syncer2.api.matic.network/api/v1/tx/${txHash}/receipt/proof/").enqueue(object : Callback<TransactionModel>{
-            override fun onFailure(call: Call<TransactionModel>, t: Throwable) {
-                println(t.message)
-            }
+//    fun verifyTxProof(txHash: String) {
+//        SyncerApiFactory.instance.verifyTxProof(txHash)
+//        .subscribeOn(Schedulers.io())
+//    }
 
-            override fun onResponse(call: Call<TransactionModel>, response: Response<TransactionModel>) {
-                println("response ${response.body()}")
-            }
-        })
+
+     fun getReceiptProof(txHash: String) : Single<TxProofModel> {
+         return SyncerApiFactory.getRetrofitInstance().getReceiptProof(txHash)
+             .subscribeOn(Schedulers.io())
+     }
+//
+//    fun verifyReceiptProof(txHash: String) {
+//
+//    }
+//
+    fun getHeaderObject(blockNumber: String) : Single<WatcherModel> {
+        return WatcherApiFactory.getRetrofitInstance().getHeaderObject(blockNumber)
+            .subscribeOn(Schedulers.io())
     }
 
-    fun verifyReceiptProof(txHash: String) {
-
-    }
-
-    fun getHeaderObject(blockNumber: String) {
-        ApiClient.instance.getTransaction("${ConfigUtils.WATCHER_URL}/header/included/${blockNumber}").enqueue(object : Callback<TransactionModel>{
-            override fun onFailure(call: Call<TransactionModel>, t: Throwable) {
-                println(t.message)
-            }
-
-            override fun onResponse(call: Call<TransactionModel>, response: Response<TransactionModel>) {
-                println("response ${response.body()}")
-            }
-        })
-    }
-
-    fun getHeaderProof(blockNumber: String) {
-        ApiClient.instance.getTransaction("${ConfigUtils.SYNCER_URL}/block/${blockNumber}/proof").enqueue(object : Callback<TransactionModel>{
-            override fun onFailure(call: Call<TransactionModel>, t: Throwable) {
-                println(t.message)
-            }
-
-            override fun onResponse(call: Call<TransactionModel>, response: Response<TransactionModel>) {
-                println("response ${response.body()}")
-            }
-        })
-    }
+//
+//    fun getHeaderProof(blockNumber: String) {
+//        SyncerApiFactory.instance.getTransaction("${ConfigUtils.SYNCER_URL}/block/${blockNumber}/proof").enqueue(object : Callback<TransactionModel>{
+//            override fun onFailure(call: Call<TransactionModel>, t: Throwable) {
+//                println(t.message)
+//            }
+//
+//            override fun onResponse(call: Call<TransactionModel>, response: Response<TransactionModel>) {
+//                println("response ${response.body()}")
+//            }
+//        })
+//    }
 
     fun verifyHeaderProof() {
 
     }
 
-    fun withdraw(contractAddress: String, parent: Boolean = true) {
+    fun withdraw(contractAddress: String, txHash: String, parent: Boolean = true) {
+        var txProof = getTxProof(txHash)
+        println("${txProof.blockingGet().proof.blockNumber}")
+        var receiptProof = getReceiptProof(txHash)
+        println("${receiptProof.blockingGet()}")
 
+
+        var header = getHeaderObject(txProof.blockingGet().proof.blockNumber)
+        println("header ${header.blockingGet()}")
+//        val tx = TxProofModel
+//        loadWithdrawMangerContract(contractAddress, parent).flatMap {
+//            it.withdrawBurntTokens(
+//                BigInteger.valueOf(header.number),
+//                header,
+//                BigInteger.valueOf(txProof.blockNumber),
+//                BigInteger.valueOf(txProof.blockTimestamp),
+//
+//            )
+//        }
     }
 
     fun processExits(contractAddress: String, parent: Boolean = true) {

@@ -20,9 +20,9 @@ object ConfigUtils {
     const val DEPOSITMANAGER_ADDRESS =
         "0x4072fab2a132bf98207cbfcd2c341adb904a67e9"  // An address for a DepositManager contract in Ropsten testnet
     const val SYNCER_URL =
-        "https://matic-syncer2.api.matic.network/api/v1" // Backend service which syncs the Matic sidechain state to a MySQL database which we use for faster querying. This comes in handy especially for constructing withdrawal proofs while exiting assets from Plasma.
+        "https://matic-syncer2.api.matic.network/api/v1/" // Backend service which syncs the Matic sidechain state to a MySQL database which we use for faster querying. This comes in handy especially for constructing withdrawal proofs while exiting assets from Plasma.
     const val WATCHER_URL =
-        "https://ropsten-watcher2.api.matic.network/api/v1" // Backend service which syncs the Matic Plasma contract events on Ethereum mainchain to a MySQL database which we use for faster querying. This comes in handy especially for listening to asset deposits on the Plasma contract.
+        "https://ropsten-watcher2.api.matic.network/api/v1/" // Backend service which syncs the Matic Plasma contract events on Ethereum mainchain to a MySQL database which we use for faster querying. This comes in handy especially for listening to asset deposits on the Plasma contract.
     const val ROOTWETH_ADDRESS =
         "0x421dc9053cb4b51a7ec07b60c2bbb3ec3cfe050b"  // This is a wrapped ETH ERC20 contract address so that we can support ETH deposits to the sidechain
     const val MATICWETH_ADDRESS =
