@@ -6,7 +6,7 @@ import network.matic.matick.tuples.Tuple;
 /**
  * Auto generated code.
  * <p><strong>Do not modifiy!</strong>
- * <p>Please use org.web3j.codegen.TupleGenerator in the
+ * <p>Please use network.matic.matick.core.codegen.TupleGenerator in the
  * <a href="https://github.com/web3j/web3j/tree/master/codegen">codegen module</a> to update.
  */
 public final class Tuple1<T1> implements Tuple {

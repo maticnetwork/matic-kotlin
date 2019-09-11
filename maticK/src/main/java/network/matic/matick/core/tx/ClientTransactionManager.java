@@ -1,3 +1,15 @@
+/*
+ * Copyright 2019 Web3 Labs LTD.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
 package network.matic.matick.core.tx;
 
 import java.io.IOException;
@@ -16,11 +28,9 @@ import network.matic.matick.core.tx.response.TransactionReceiptProcessor;
  */
 public class ClientTransactionManager extends TransactionManager {
 
-
     private final Web3j web3j;
 
-    public ClientTransactionManager(
-            Web3j web3j, String fromAddress) {
+    public ClientTransactionManager(Web3j web3j, String fromAddress) {
         super(web3j, fromAddress);
         this.web3j = web3j;
     }
@@ -32,7 +42,8 @@ public class ClientTransactionManager extends TransactionManager {
     }
 
     public ClientTransactionManager(
-            Web3j web3j, String fromAddress,
+            Web3j web3j,
+            String fromAddress,
             TransactionReceiptProcessor transactionReceiptProcessor) {
         super(transactionReceiptProcessor, fromAddress);
         this.web3j = web3j;
@@ -44,7 +55,8 @@ public class ClientTransactionManager extends TransactionManager {
             BigInteger gasLimit,
             String to,
             String data,
-            BigInteger value)
+            BigInteger value,
+            boolean constructor)
             throws IOException {
 
         Transaction transaction =
@@ -56,10 +68,10 @@ public class ClientTransactionManager extends TransactionManager {
     @Override
     public String sendCall(String to, String data, DefaultBlockParameter defaultBlockParameter)
             throws IOException {
-        System.out.println("sendCall");
         return web3j.ethCall(
-                Transaction.createEthCallTransaction(getFromAddress(), to, data),
-                defaultBlockParameter)
-                .send().getValue();
+                        Transaction.createEthCallTransaction(getFromAddress(), to, data),
+                        defaultBlockParameter)
+                .send()
+                .getValue();
     }
 }

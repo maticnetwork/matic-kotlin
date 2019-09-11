@@ -147,7 +147,7 @@ public abstract class TypeReference<T extends network.matic.matick.abi.datatypes
                 if (arraySizeInt <= StaticArray.MAX_SIZE_OF_STATIC_ARRAY) {
                     arrayclass =
                             Class.forName(
-                                    "org.web3j.abi.datatypes.generated.StaticArray" + arraySize);
+                                    "network.matic.matick.abi.datatypes.generated.StaticArray" + arraySize);
                 } else {
                     arrayclass = StaticArray.class;
                 }
