@@ -7,7 +7,6 @@ import java.math.BigInteger
 object TestMaticK {
     fun initWeb3() {
         var matick = Matick()
-        println("dfsdfsdfsd")
 //        matick.getGasPrice()
 //            .subscribeOn(Schedulers.io())
 //            .observeOn(AndroidSchedulers.mainThread())
@@ -89,6 +88,7 @@ object TestMaticK {
 //                it.printStackTrace()
 //            })
 
-        matick.getTx()
+        matick.getTx("0xc79e89838582267224b4bb6491661b12dffdd0cf0fdc65c71bfb104dac532d56")
+//        matick.getReceipt("0xc79e89838582267224b4bb6491661b12dffdd0cf0fdc65c71bfb104dac532d56")
     }
 }

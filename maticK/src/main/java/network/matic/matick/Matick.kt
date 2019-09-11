@@ -104,7 +104,7 @@ class Matick {
         }
     }
 
-    fun loadRootChainContract(contractAddress: String, parent: Boolean): Flowable<_RootChain> {
+    fun loadRootChainContract(contractAddress: String, parent: Boolean): Flowable<RootChain> {
 
         return getGasPrice().zipWith(
             estimateGasLimit(),
@@ -113,7 +113,7 @@ class Matick {
             }
         ).map {
             println("gas ${it.ethEstimateGas}")
-            _RootChain.load(
+            RootChain.load(
                 contractAddress,
                 if (parent) web3jParent else web3j,
                 Credentials.create(ConfigUtils.PRIVATE_KEY),
@@ -366,9 +366,26 @@ class Matick {
             }
     }
 
-    fun getTx() {
-        ApiClient.instance.getTransaction("https://matic-syncer2.api.matic.network/api/v1/tx/0xd8a23083d6ad4d0f081c180450bbab964c25263a6b225b98751406c23e54cb31/").enqueue(object : Callback<TransactionModel>{
+    fun getTx(txHash: String) {
+        println("here ${txHash}")
+        ApiClient.instance.getTransaction(txHash).enqueue(object : Callback<TransactionModel> {
+            override fun onFailure(call: Call<TransactionModel>, t: Throwable) {
+                println("error ${t.message}")
+            }
 
+            override fun onResponse(
+                call: Call<TransactionModel>,
+                response: Response<TransactionModel>
+            ) {
+                println("response ${response.body()}")
+            }
+
+        })
+
+    }
+
+    fun getReceipt(txHash: String) {
+        ApiClient.instance.getTransactionReceipt(txHash).enqueue(object : Callback<TransactionModel>{
             override fun onFailure(call: Call<TransactionModel>, t: Throwable) {
                 println(t.message)
             }
@@ -376,36 +393,71 @@ class Matick {
             override fun onResponse(call: Call<TransactionModel>, response: Response<TransactionModel>) {
                 println("response ${response.body()}")
             }
-
         })
     }
 
-    fun getReceipt() {
+    fun getTxProof(txHash: String) {
+        ApiClient.instance.getTransaction("https://matic-syncer2.api.matic.network/api/v1/tx/${txHash}/proof/").enqueue(object : Callback<TransactionModel>{
+            override fun onFailure(call: Call<TransactionModel>, t: Throwable) {
+                println(t.message)
+            }
+
+            override fun onResponse(call: Call<TransactionModel>, response: Response<TransactionModel>) {
+                println("response ${response.body()}")
+            }
+        })
+    }
+
+    fun verifyTxProof(txHash: String) {
+//        ApiClient.instance.getTransaction("https://matic-syncer2.api.matic.network/api/v1/tx/${txHash}/").enqueue(object : Callback<TransactionModel>{
+//            override fun onFailure(call: Call<TransactionModel>, t: Throwable) {
+//                println(t.message)
+//            }
+//
+//            override fun onResponse(call: Call<TransactionModel>, response: Response<TransactionModel>) {
+//                println("response ${response.body()}")
+//            }
+//        })
+    }
+
+    fun getReceiptProof(txHash: String) {
+        ApiClient.instance.getTransaction("https://matic-syncer2.api.matic.network/api/v1/tx/${txHash}/receipt/proof/").enqueue(object : Callback<TransactionModel>{
+            override fun onFailure(call: Call<TransactionModel>, t: Throwable) {
+                println(t.message)
+            }
+
+            override fun onResponse(call: Call<TransactionModel>, response: Response<TransactionModel>) {
+                println("response ${response.body()}")
+            }
+        })
+    }
+
+    fun verifyReceiptProof(txHash: String) {
 
     }
 
-    fun getTxProof() {
+    fun getHeaderObject(blockNumber: String) {
+        ApiClient.instance.getTransaction("${ConfigUtils.WATCHER_URL}/header/included/${blockNumber}").enqueue(object : Callback<TransactionModel>{
+            override fun onFailure(call: Call<TransactionModel>, t: Throwable) {
+                println(t.message)
+            }
 
+            override fun onResponse(call: Call<TransactionModel>, response: Response<TransactionModel>) {
+                println("response ${response.body()}")
+            }
+        })
     }
 
-    fun verifyTxProof() {
+    fun getHeaderProof(blockNumber: String) {
+        ApiClient.instance.getTransaction("${ConfigUtils.SYNCER_URL}/block/${blockNumber}/proof").enqueue(object : Callback<TransactionModel>{
+            override fun onFailure(call: Call<TransactionModel>, t: Throwable) {
+                println(t.message)
+            }
 
-    }
-
-    fun getReceiptProof() {
-
-    }
-
-    fun verifyReceiptProof() {
-
-    }
-
-    fun getHeaderObject() {
-
-    }
-
-    fun getHeaderProof() {
-
+            override fun onResponse(call: Call<TransactionModel>, response: Response<TransactionModel>) {
+                println("response ${response.body()}")
+            }
+        })
     }
 
     fun verifyHeaderProof() {
