@@ -1,26 +1,16 @@
 package network.matic.matick.artifacts;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.Callable;
-
 import io.reactivex.Flowable;
 import io.reactivex.Single;
 import network.matic.matick.abi.EventEncoder;
 import network.matic.matick.abi.TypeReference;
-import network.matic.matick.abi.datatypes.Address;
-import network.matic.matick.abi.datatypes.Bool;
-import network.matic.matick.abi.datatypes.DynamicBytes;
-import network.matic.matick.abi.datatypes.Event;
-import network.matic.matick.abi.datatypes.Function;
-import network.matic.matick.abi.datatypes.Type;
+import network.matic.matick.abi.datatypes.*;
 import network.matic.matick.abi.datatypes.generated.Bytes1;
 import network.matic.matick.abi.datatypes.generated.Bytes32;
 import network.matic.matick.abi.datatypes.generated.Uint256;
+import network.matic.matick.core.tx.Contract;
+import network.matic.matick.crypto.Credentials;
+import network.matic.matick.crypto.RawTransaction;
 import network.matic.matick.core.protocol.Web3j;
 import network.matic.matick.core.protocol.core.DefaultBlockParameter;
 import network.matic.matick.core.protocol.core.RemoteCall;
@@ -29,19 +19,20 @@ import network.matic.matick.core.protocol.core.methods.request.EthFilter;
 import network.matic.matick.core.protocol.core.methods.response.BaseEventResponse;
 import network.matic.matick.core.protocol.core.methods.response.Log;
 import network.matic.matick.core.protocol.core.methods.response.TransactionReceipt;
-import network.matic.matick.core.tx.Contract;
-import network.matic.matick.core.tx.TransactionManager;
-import network.matic.matick.core.tx.gas.ContractGasProvider;
-import network.matic.matick.crypto.Credentials;
-import network.matic.matick.crypto.RawTransaction;
 import network.matic.matick.tuples.generated.Tuple4;
 import network.matic.matick.tuples.generated.Tuple5;
+import network.matic.matick.core.tx.TransactionManager;
+import network.matic.matick.core.tx.gas.ContractGasProvider;
+
+import java.math.BigInteger;
+import java.util.*;
+import java.util.concurrent.Callable;
 
 /**
  * <p>Auto generated code.
  * <p><strong>Do not modify!</strong>
  * <p>Please use the <a href="https://docs.web3j.io/command_line.html">web3j command line tools</a>,
- * or the org.web3j.codegen.SolidityFunctionWrapperGenerator in the
+ * or the org.web3j.codegen.SolidityFunctionWrapperGenerator in the 
  * <a href="https://github.com/web3j/web3j/tree/master/codegen">codegen module</a> to update.
  *
  * <p>Generated with web3j version 4.6.0-SNAPSHOT.
@@ -125,23 +116,23 @@ public class RootChain extends Contract {
 
     public static final String FUNC_SLASH = "slash";
 
-    public static final Event CHILDCHAINCHANGED_EVENT = new Event("ChildChainChanged",
+    public static final Event CHILDCHAINCHANGED_EVENT = new Event("ChildChainChanged", 
             Arrays.<TypeReference<?>>asList(new TypeReference<Address>(true) {}, new TypeReference<Address>(true) {}));
     ;
 
-    public static final Event PROOFVALIDATORADDED_EVENT = new Event("ProofValidatorAdded",
+    public static final Event PROOFVALIDATORADDED_EVENT = new Event("ProofValidatorAdded", 
             Arrays.<TypeReference<?>>asList(new TypeReference<Address>(true) {}, new TypeReference<Address>(true) {}));
     ;
 
-    public static final Event PROOFVALIDATORREMOVED_EVENT = new Event("ProofValidatorRemoved",
+    public static final Event PROOFVALIDATORREMOVED_EVENT = new Event("ProofValidatorRemoved", 
             Arrays.<TypeReference<?>>asList(new TypeReference<Address>(true) {}, new TypeReference<Address>(true) {}));
     ;
 
-    public static final Event NEWHEADERBLOCK_EVENT = new Event("NewHeaderBlock",
+    public static final Event NEWHEADERBLOCK_EVENT = new Event("NewHeaderBlock", 
             Arrays.<TypeReference<?>>asList(new TypeReference<Address>(true) {}, new TypeReference<Uint256>(true) {}, new TypeReference<Uint256>() {}, new TypeReference<Uint256>() {}, new TypeReference<Bytes32>() {}));
     ;
 
-    public static final Event OWNERSHIPTRANSFERRED_EVENT = new Event("OwnershipTransferred",
+    public static final Event OWNERSHIPTRANSFERRED_EVENT = new Event("OwnershipTransferred", 
             Arrays.<TypeReference<?>>asList(new TypeReference<Address>(true) {}, new TypeReference<Address>(true) {}));
     ;
 
@@ -170,21 +161,21 @@ public class RootChain extends Contract {
     }
 
     public RemoteFunctionCall<String> childChainContract() {
-        final Function function = new Function(FUNC_CHILDCHAINCONTRACT,
+        final Function function = new Function(FUNC_CHILDCHAINCONTRACT, 
                 Arrays.<Type>asList(),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}));
         return executeRemoteCallSingleValueReturn(function, String.class);
     }
 
     public RemoteFunctionCall<byte[]> roundType() {
-        final Function function = new Function(FUNC_ROUNDTYPE,
+        final Function function = new Function(FUNC_ROUNDTYPE, 
                 Arrays.<Type>asList(),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Bytes32>() {}));
         return executeRemoteCallSingleValueReturn(function, byte[].class);
     }
 
     public RemoteFunctionCall<Tuple5<byte[], BigInteger, BigInteger, BigInteger, String>> headerBlocks(BigInteger param0) {
-        final Function function = new Function(FUNC_HEADERBLOCKS,
+        final Function function = new Function(FUNC_HEADERBLOCKS, 
                 Arrays.<Type>asList(new Uint256(param0)),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Bytes32>() {}, new TypeReference<Uint256>() {}, new TypeReference<Uint256>() {}, new TypeReference<Uint256>() {}, new TypeReference<Address>() {}));
         return new RemoteFunctionCall<Tuple5<byte[], BigInteger, BigInteger, BigInteger, String>>(function,
@@ -193,7 +184,7 @@ public class RootChain extends Contract {
                     public Tuple5<byte[], BigInteger, BigInteger, BigInteger, String> call() throws Exception {
                         List<Type> results = executeCallMultipleValueReturn(function);
                         return new Tuple5<byte[], BigInteger, BigInteger, BigInteger, String>(
-                                (byte[]) results.get(0).getValue(),
+                                (byte[]) results.get(0).getValue(), 
                                 (BigInteger) results.get(1).getValue(),
                                 (BigInteger) results.get(2).getValue(),
                                 (BigInteger) results.get(3).getValue(),
@@ -203,7 +194,7 @@ public class RootChain extends Contract {
     }
 
     public RemoteFunctionCall<String> depositManager() {
-        final Function function = new Function(FUNC_DEPOSITMANAGER,
+        final Function function = new Function(FUNC_DEPOSITMANAGER, 
                 Arrays.<Type>asList(),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}));
         return executeRemoteCallSingleValueReturn(function, String.class);
@@ -211,70 +202,70 @@ public class RootChain extends Contract {
 
     public Single<RawTransaction> renounceOwnership() {
         final Function function = new Function(
-                FUNC_RENOUNCEOWNERSHIP,
+                FUNC_RENOUNCEOWNERSHIP, 
                 Arrays.<Type>asList(),
                 Collections.<TypeReference<?>>emptyList());
         return createRawTransaction(function);
     }
 
     public RemoteFunctionCall<String> stakeManager() {
-        final Function function = new Function(FUNC_STAKEMANAGER,
+        final Function function = new Function(FUNC_STAKEMANAGER, 
                 Arrays.<Type>asList(),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}));
         return executeRemoteCallSingleValueReturn(function, String.class);
     }
 
     public RemoteFunctionCall<byte[]> voteType() {
-        final Function function = new Function(FUNC_VOTETYPE,
+        final Function function = new Function(FUNC_VOTETYPE, 
                 Arrays.<Type>asList(),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Bytes1>() {}));
         return executeRemoteCallSingleValueReturn(function, byte[].class);
     }
 
     public RemoteFunctionCall<String> owner() {
-        final Function function = new Function(FUNC_OWNER,
+        final Function function = new Function(FUNC_OWNER, 
                 Arrays.<Type>asList(),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}));
         return executeRemoteCallSingleValueReturn(function, String.class);
     }
 
     public RemoteFunctionCall<Boolean> isOwner() {
-        final Function function = new Function(FUNC_ISOWNER,
+        final Function function = new Function(FUNC_ISOWNER, 
                 Arrays.<Type>asList(),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Bool>() {}));
         return executeRemoteCallSingleValueReturn(function, Boolean.class);
     }
 
     public RemoteFunctionCall<byte[]> networkId() {
-        final Function function = new Function(FUNC_NETWORKID,
+        final Function function = new Function(FUNC_NETWORKID, 
                 Arrays.<Type>asList(),
                 Arrays.<TypeReference<?>>asList(new TypeReference<DynamicBytes>() {}));
         return executeRemoteCallSingleValueReturn(function, byte[].class);
     }
 
     public RemoteFunctionCall<BigInteger> CHILD_BLOCK_INTERVAL() {
-        final Function function = new Function(FUNC_CHILD_BLOCK_INTERVAL,
+        final Function function = new Function(FUNC_CHILD_BLOCK_INTERVAL, 
                 Arrays.<Type>asList(),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Uint256>() {}));
         return executeRemoteCallSingleValueReturn(function, BigInteger.class);
     }
 
     public RemoteFunctionCall<Boolean> proofValidatorContracts(String param0) {
-        final Function function = new Function(FUNC_PROOFVALIDATORCONTRACTS,
+        final Function function = new Function(FUNC_PROOFVALIDATORCONTRACTS, 
                 Arrays.<Type>asList(new Address(param0)),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Bool>() {}));
         return executeRemoteCallSingleValueReturn(function, Boolean.class);
     }
 
     public RemoteFunctionCall<byte[]> chain() {
-        final Function function = new Function(FUNC_CHAIN,
+        final Function function = new Function(FUNC_CHAIN, 
                 Arrays.<Type>asList(),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Bytes32>() {}));
         return executeRemoteCallSingleValueReturn(function, byte[].class);
     }
 
     public RemoteFunctionCall<String> withdrawManager() {
-        final Function function = new Function(FUNC_WITHDRAWMANAGER,
+        final Function function = new Function(FUNC_WITHDRAWMANAGER, 
                 Arrays.<Type>asList(),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}));
         return executeRemoteCallSingleValueReturn(function, String.class);
@@ -282,16 +273,16 @@ public class RootChain extends Contract {
 
     public Single<RawTransaction> transferOwnership(String newOwner) {
         final Function function = new Function(
-                FUNC_TRANSFEROWNERSHIP,
+                FUNC_TRANSFEROWNERSHIP, 
                 Arrays.<Type>asList(new Address(newOwner)),
                 Collections.<TypeReference<?>>emptyList());
         return createRawTransaction(function);
     }
 
     public List<ChildChainChangedEventResponse> getChildChainChangedEvents(TransactionReceipt transactionReceipt) {
-        List<Contract.EventValuesWithLog> valueList = extractEventParametersWithLog(CHILDCHAINCHANGED_EVENT, transactionReceipt);
+        List<EventValuesWithLog> valueList = extractEventParametersWithLog(CHILDCHAINCHANGED_EVENT, transactionReceipt);
         ArrayList<ChildChainChangedEventResponse> responses = new ArrayList<ChildChainChangedEventResponse>(valueList.size());
-        for (Contract.EventValuesWithLog eventValues : valueList) {
+        for (EventValuesWithLog eventValues : valueList) {
             ChildChainChangedEventResponse typedResponse = new ChildChainChangedEventResponse();
             typedResponse.log = eventValues.getLog();
             typedResponse.previousChildChain = (String) eventValues.getIndexedValues().get(0).getValue();
@@ -301,6 +292,20 @@ public class RootChain extends Contract {
         return responses;
     }
 
+    public Flowable<ChildChainChangedEventResponse> childChainChangedEventFlowable(EthFilter filter) {
+        return web3j.ethLogFlowable(filter).map(new io.reactivex.functions.Function<Log, ChildChainChangedEventResponse>() {
+            @Override
+            public ChildChainChangedEventResponse apply(Log log) {
+                EventValuesWithLog eventValues = extractEventParametersWithLog(CHILDCHAINCHANGED_EVENT, log);
+                ChildChainChangedEventResponse typedResponse = new ChildChainChangedEventResponse();
+                typedResponse.log = log;
+                typedResponse.previousChildChain = (String) eventValues.getIndexedValues().get(0).getValue();
+                typedResponse.newChildChain = (String) eventValues.getIndexedValues().get(1).getValue();
+                return typedResponse;
+            }
+        });
+    }
+
     public Flowable<ChildChainChangedEventResponse> childChainChangedEventFlowable(DefaultBlockParameter startBlock, DefaultBlockParameter endBlock) {
         EthFilter filter = new EthFilter(startBlock, endBlock, getContractAddress());
         filter.addSingleTopic(EventEncoder.encode(CHILDCHAINCHANGED_EVENT));
@@ -308,9 +313,9 @@ public class RootChain extends Contract {
     }
 
     public List<ProofValidatorAddedEventResponse> getProofValidatorAddedEvents(TransactionReceipt transactionReceipt) {
-        List<Contract.EventValuesWithLog> valueList = extractEventParametersWithLog(PROOFVALIDATORADDED_EVENT, transactionReceipt);
+        List<EventValuesWithLog> valueList = extractEventParametersWithLog(PROOFVALIDATORADDED_EVENT, transactionReceipt);
         ArrayList<ProofValidatorAddedEventResponse> responses = new ArrayList<ProofValidatorAddedEventResponse>(valueList.size());
-        for (Contract.EventValuesWithLog eventValues : valueList) {
+        for (EventValuesWithLog eventValues : valueList) {
             ProofValidatorAddedEventResponse typedResponse = new ProofValidatorAddedEventResponse();
             typedResponse.log = eventValues.getLog();
             typedResponse.validator = (String) eventValues.getIndexedValues().get(0).getValue();
@@ -320,6 +325,20 @@ public class RootChain extends Contract {
         return responses;
     }
 
+    public Flowable<ProofValidatorAddedEventResponse> proofValidatorAddedEventFlowable(EthFilter filter) {
+        return web3j.ethLogFlowable(filter).map(new io.reactivex.functions.Function<Log, ProofValidatorAddedEventResponse>() {
+            @Override
+            public ProofValidatorAddedEventResponse apply(Log log) {
+                EventValuesWithLog eventValues = extractEventParametersWithLog(PROOFVALIDATORADDED_EVENT, log);
+                ProofValidatorAddedEventResponse typedResponse = new ProofValidatorAddedEventResponse();
+                typedResponse.log = log;
+                typedResponse.validator = (String) eventValues.getIndexedValues().get(0).getValue();
+                typedResponse.from = (String) eventValues.getIndexedValues().get(1).getValue();
+                return typedResponse;
+            }
+        });
+    }
+
     public Flowable<ProofValidatorAddedEventResponse> proofValidatorAddedEventFlowable(DefaultBlockParameter startBlock, DefaultBlockParameter endBlock) {
         EthFilter filter = new EthFilter(startBlock, endBlock, getContractAddress());
         filter.addSingleTopic(EventEncoder.encode(PROOFVALIDATORADDED_EVENT));
@@ -327,9 +346,9 @@ public class RootChain extends Contract {
     }
 
     public List<ProofValidatorRemovedEventResponse> getProofValidatorRemovedEvents(TransactionReceipt transactionReceipt) {
-        List<Contract.EventValuesWithLog> valueList = extractEventParametersWithLog(PROOFVALIDATORREMOVED_EVENT, transactionReceipt);
+        List<EventValuesWithLog> valueList = extractEventParametersWithLog(PROOFVALIDATORREMOVED_EVENT, transactionReceipt);
         ArrayList<ProofValidatorRemovedEventResponse> responses = new ArrayList<ProofValidatorRemovedEventResponse>(valueList.size());
-        for (Contract.EventValuesWithLog eventValues : valueList) {
+        for (EventValuesWithLog eventValues : valueList) {
             ProofValidatorRemovedEventResponse typedResponse = new ProofValidatorRemovedEventResponse();
             typedResponse.log = eventValues.getLog();
             typedResponse.validator = (String) eventValues.getIndexedValues().get(0).getValue();
@@ -339,6 +358,20 @@ public class RootChain extends Contract {
         return responses;
     }
 
+    public Flowable<ProofValidatorRemovedEventResponse> proofValidatorRemovedEventFlowable(EthFilter filter) {
+        return web3j.ethLogFlowable(filter).map(new io.reactivex.functions.Function<Log, ProofValidatorRemovedEventResponse>() {
+            @Override
+            public ProofValidatorRemovedEventResponse apply(Log log) {
+                EventValuesWithLog eventValues = extractEventParametersWithLog(PROOFVALIDATORREMOVED_EVENT, log);
+                ProofValidatorRemovedEventResponse typedResponse = new ProofValidatorRemovedEventResponse();
+                typedResponse.log = log;
+                typedResponse.validator = (String) eventValues.getIndexedValues().get(0).getValue();
+                typedResponse.from = (String) eventValues.getIndexedValues().get(1).getValue();
+                return typedResponse;
+            }
+        });
+    }
+
     public Flowable<ProofValidatorRemovedEventResponse> proofValidatorRemovedEventFlowable(DefaultBlockParameter startBlock, DefaultBlockParameter endBlock) {
         EthFilter filter = new EthFilter(startBlock, endBlock, getContractAddress());
         filter.addSingleTopic(EventEncoder.encode(PROOFVALIDATORREMOVED_EVENT));
@@ -346,9 +379,9 @@ public class RootChain extends Contract {
     }
 
     public List<NewHeaderBlockEventResponse> getNewHeaderBlockEvents(TransactionReceipt transactionReceipt) {
-        List<Contract.EventValuesWithLog> valueList = extractEventParametersWithLog(NEWHEADERBLOCK_EVENT, transactionReceipt);
+        List<EventValuesWithLog> valueList = extractEventParametersWithLog(NEWHEADERBLOCK_EVENT, transactionReceipt);
         ArrayList<NewHeaderBlockEventResponse> responses = new ArrayList<NewHeaderBlockEventResponse>(valueList.size());
-        for (Contract.EventValuesWithLog eventValues : valueList) {
+        for (EventValuesWithLog eventValues : valueList) {
             NewHeaderBlockEventResponse typedResponse = new NewHeaderBlockEventResponse();
             typedResponse.log = eventValues.getLog();
             typedResponse.proposer = (String) eventValues.getIndexedValues().get(0).getValue();
@@ -361,6 +394,23 @@ public class RootChain extends Contract {
         return responses;
     }
 
+    public Flowable<NewHeaderBlockEventResponse> newHeaderBlockEventFlowable(EthFilter filter) {
+        return web3j.ethLogFlowable(filter).map(new io.reactivex.functions.Function<Log, NewHeaderBlockEventResponse>() {
+            @Override
+            public NewHeaderBlockEventResponse apply(Log log) {
+                EventValuesWithLog eventValues = extractEventParametersWithLog(NEWHEADERBLOCK_EVENT, log);
+                NewHeaderBlockEventResponse typedResponse = new NewHeaderBlockEventResponse();
+                typedResponse.log = log;
+                typedResponse.proposer = (String) eventValues.getIndexedValues().get(0).getValue();
+                typedResponse.number = (BigInteger) eventValues.getIndexedValues().get(1).getValue();
+                typedResponse.start = (BigInteger) eventValues.getNonIndexedValues().get(0).getValue();
+                typedResponse.end = (BigInteger) eventValues.getNonIndexedValues().get(1).getValue();
+                typedResponse.root = (byte[]) eventValues.getNonIndexedValues().get(2).getValue();
+                return typedResponse;
+            }
+        });
+    }
+
     public Flowable<NewHeaderBlockEventResponse> newHeaderBlockEventFlowable(DefaultBlockParameter startBlock, DefaultBlockParameter endBlock) {
         EthFilter filter = new EthFilter(startBlock, endBlock, getContractAddress());
         filter.addSingleTopic(EventEncoder.encode(NEWHEADERBLOCK_EVENT));
@@ -368,9 +418,9 @@ public class RootChain extends Contract {
     }
 
     public List<OwnershipTransferredEventResponse> getOwnershipTransferredEvents(TransactionReceipt transactionReceipt) {
-        List<Contract.EventValuesWithLog> valueList = extractEventParametersWithLog(OWNERSHIPTRANSFERRED_EVENT, transactionReceipt);
+        List<EventValuesWithLog> valueList = extractEventParametersWithLog(OWNERSHIPTRANSFERRED_EVENT, transactionReceipt);
         ArrayList<OwnershipTransferredEventResponse> responses = new ArrayList<OwnershipTransferredEventResponse>(valueList.size());
-        for (Contract.EventValuesWithLog eventValues : valueList) {
+        for (EventValuesWithLog eventValues : valueList) {
             OwnershipTransferredEventResponse typedResponse = new OwnershipTransferredEventResponse();
             typedResponse.log = eventValues.getLog();
             typedResponse.previousOwner = (String) eventValues.getIndexedValues().get(0).getValue();
@@ -378,6 +428,20 @@ public class RootChain extends Contract {
             responses.add(typedResponse);
         }
         return responses;
+    }
+
+    public Flowable<OwnershipTransferredEventResponse> ownershipTransferredEventFlowable(EthFilter filter) {
+        return web3j.ethLogFlowable(filter).map(new io.reactivex.functions.Function<Log, OwnershipTransferredEventResponse>() {
+            @Override
+            public OwnershipTransferredEventResponse apply(Log log) {
+                EventValuesWithLog eventValues = extractEventParametersWithLog(OWNERSHIPTRANSFERRED_EVENT, log);
+                OwnershipTransferredEventResponse typedResponse = new OwnershipTransferredEventResponse();
+                typedResponse.log = log;
+                typedResponse.previousOwner = (String) eventValues.getIndexedValues().get(0).getValue();
+                typedResponse.newOwner = (String) eventValues.getIndexedValues().get(1).getValue();
+                return typedResponse;
+            }
+        });
     }
 
     public Flowable<OwnershipTransferredEventResponse> ownershipTransferredEventFlowable(DefaultBlockParameter startBlock, DefaultBlockParameter endBlock) {
@@ -388,17 +452,17 @@ public class RootChain extends Contract {
 
     public Single<RawTransaction> submitHeaderBlock(byte[] vote, byte[] sigs, byte[] extradata) {
         final Function function = new Function(
-                FUNC_SUBMITHEADERBLOCK,
+                FUNC_SUBMITHEADERBLOCK, 
                 Arrays.<Type>asList(new DynamicBytes(vote),
-                        new DynamicBytes(sigs),
-                        new DynamicBytes(extradata)),
+                new DynamicBytes(sigs),
+                new DynamicBytes(extradata)),
                 Collections.<TypeReference<?>>emptyList());
         return createRawTransaction(function);
     }
 
     public Single<RawTransaction> deleteExit(BigInteger exitId) {
         final Function function = new Function(
-                FUNC_DELETEEXIT,
+                FUNC_DELETEEXIT, 
                 Arrays.<Type>asList(new Uint256(exitId)),
                 Collections.<TypeReference<?>>emptyList());
         return createRawTransaction(function);
@@ -406,7 +470,7 @@ public class RootChain extends Contract {
 
     public Single<RawTransaction> setExitNFTContract(String _nftContract) {
         final Function function = new Function(
-                FUNC_SETEXITNFTCONTRACT,
+                FUNC_SETEXITNFTCONTRACT, 
                 Arrays.<Type>asList(new Address(_nftContract)),
                 Collections.<TypeReference<?>>emptyList());
         return createRawTransaction(function);
@@ -414,7 +478,7 @@ public class RootChain extends Contract {
 
     public Single<RawTransaction> setWETHToken(String _token) {
         final Function function = new Function(
-                FUNC_SETWETHTOKEN,
+                FUNC_SETWETHTOKEN, 
                 Arrays.<Type>asList(new Address(_token)),
                 Collections.<TypeReference<?>>emptyList());
         return createRawTransaction(function);
@@ -422,17 +486,17 @@ public class RootChain extends Contract {
 
     public Single<RawTransaction> mapToken(String _rootToken, String _childToken, Boolean _isERC721) {
         final Function function = new Function(
-                FUNC_MAPTOKEN,
+                FUNC_MAPTOKEN, 
                 Arrays.<Type>asList(new Address(_rootToken),
-                        new Address(_childToken),
-                        new Bool(_isERC721)),
+                new Address(_childToken),
+                new Bool(_isERC721)),
                 Collections.<TypeReference<?>>emptyList());
         return createRawTransaction(function);
     }
 
     public Single<RawTransaction> setChildContract(String newChildChain) {
         final Function function = new Function(
-                FUNC_SETCHILDCONTRACT,
+                FUNC_SETCHILDCONTRACT, 
                 Arrays.<Type>asList(new Address(newChildChain)),
                 Collections.<TypeReference<?>>emptyList());
         return createRawTransaction(function);
@@ -440,7 +504,7 @@ public class RootChain extends Contract {
 
     public Single<RawTransaction> addProofValidator(String _validator) {
         final Function function = new Function(
-                FUNC_ADDPROOFVALIDATOR,
+                FUNC_ADDPROOFVALIDATOR, 
                 Arrays.<Type>asList(new Address(_validator)),
                 Collections.<TypeReference<?>>emptyList());
         return createRawTransaction(function);
@@ -448,28 +512,28 @@ public class RootChain extends Contract {
 
     public Single<RawTransaction> removeProofValidator(String _validator) {
         final Function function = new Function(
-                FUNC_REMOVEPROOFVALIDATOR,
+                FUNC_REMOVEPROOFVALIDATOR, 
                 Arrays.<Type>asList(new Address(_validator)),
                 Collections.<TypeReference<?>>emptyList());
         return createRawTransaction(function);
     }
 
     public RemoteFunctionCall<BigInteger> currentChildBlock() {
-        final Function function = new Function(FUNC_CURRENTCHILDBLOCK,
+        final Function function = new Function(FUNC_CURRENTCHILDBLOCK, 
                 Arrays.<Type>asList(),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Uint256>() {}));
         return executeRemoteCallSingleValueReturn(function, BigInteger.class);
     }
 
     public RemoteFunctionCall<BigInteger> currentHeaderBlock() {
-        final Function function = new Function(FUNC_CURRENTHEADERBLOCK,
+        final Function function = new Function(FUNC_CURRENTHEADERBLOCK, 
                 Arrays.<Type>asList(),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Uint256>() {}));
         return executeRemoteCallSingleValueReturn(function, BigInteger.class);
     }
 
     public RemoteFunctionCall<Tuple4<byte[], BigInteger, BigInteger, BigInteger>> headerBlock(BigInteger _headerNumber) {
-        final Function function = new Function(FUNC_HEADERBLOCK,
+        final Function function = new Function(FUNC_HEADERBLOCK, 
                 Arrays.<Type>asList(new Uint256(_headerNumber)),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Bytes32>() {}, new TypeReference<Uint256>() {}, new TypeReference<Uint256>() {}, new TypeReference<Uint256>() {}));
         return new RemoteFunctionCall<Tuple4<byte[], BigInteger, BigInteger, BigInteger>>(function,
@@ -478,7 +542,7 @@ public class RootChain extends Contract {
                     public Tuple4<byte[], BigInteger, BigInteger, BigInteger> call() throws Exception {
                         List<Type> results = executeCallMultipleValueReturn(function);
                         return new Tuple4<byte[], BigInteger, BigInteger, BigInteger>(
-                                (byte[]) results.get(0).getValue(),
+                                (byte[]) results.get(0).getValue(), 
                                 (BigInteger) results.get(1).getValue(),
                                 (BigInteger) results.get(2).getValue(),
                                 (BigInteger) results.get(3).getValue());
@@ -487,7 +551,7 @@ public class RootChain extends Contract {
     }
 
     public RemoteFunctionCall<Tuple5<BigInteger, String, String, BigInteger, BigInteger>> depositBlock(BigInteger _depositCount) {
-        final Function function = new Function(FUNC_DEPOSITBLOCK,
+        final Function function = new Function(FUNC_DEPOSITBLOCK, 
                 Arrays.<Type>asList(new Uint256(_depositCount)),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Uint256>() {}, new TypeReference<Address>() {}, new TypeReference<Address>() {}, new TypeReference<Uint256>() {}, new TypeReference<Uint256>() {}));
         return new RemoteFunctionCall<Tuple5<BigInteger, String, String, BigInteger, BigInteger>>(function,
@@ -507,7 +571,7 @@ public class RootChain extends Contract {
 
     public Single<RawTransaction> setStakeManager(String _stakeManager) {
         final Function function = new Function(
-                FUNC_SETSTAKEMANAGER,
+                FUNC_SETSTAKEMANAGER, 
                 Arrays.<Type>asList(new Address(_stakeManager)),
                 Collections.<TypeReference<?>>emptyList());
         return createRawTransaction(function);
@@ -515,7 +579,7 @@ public class RootChain extends Contract {
 
     public Single<RawTransaction> setDepositManager(String _depositManager) {
         final Function function = new Function(
-                FUNC_SETDEPOSITMANAGER,
+                FUNC_SETDEPOSITMANAGER, 
                 Arrays.<Type>asList(new Address(_depositManager)),
                 Collections.<TypeReference<?>>emptyList());
         return createRawTransaction(function);
@@ -523,7 +587,7 @@ public class RootChain extends Contract {
 
     public Single<RawTransaction> setWithdrawManager(String _withdrawManager) {
         final Function function = new Function(
-                FUNC_SETWITHDRAWMANAGER,
+                FUNC_SETWITHDRAWMANAGER, 
                 Arrays.<Type>asList(new Address(_withdrawManager)),
                 Collections.<TypeReference<?>>emptyList());
         return createRawTransaction(function);
@@ -531,7 +595,7 @@ public class RootChain extends Contract {
 
     public RemoteCall<TransactionReceipt> depositEthers(BigInteger weiValue) {
         final Function function = new Function(
-                FUNC_DEPOSITETHERS,
+                FUNC_DEPOSITETHERS, 
                 Arrays.<Type>asList(),
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function, weiValue);
@@ -539,58 +603,58 @@ public class RootChain extends Contract {
 
     public Single<RawTransaction> depositERC721(String _token, String _user, BigInteger _tokenId) {
         final Function function = new Function(
-                FUNC_DEPOSITERC721,
+                FUNC_DEPOSITERC721, 
                 Arrays.<Type>asList(new Address(_token),
-                        new Address(_user),
-                        new Uint256(_tokenId)),
+                new Address(_user),
+                new Uint256(_tokenId)),
                 Collections.<TypeReference<?>>emptyList());
         return createRawTransaction(function);
     }
 
     public Single<RawTransaction> onERC721Received(String operator, String from, BigInteger tokenId, byte[] data) {
         final Function function = new Function(
-                FUNC_ONERC721RECEIVED,
+                FUNC_ONERC721RECEIVED, 
                 Arrays.<Type>asList(new Address(operator),
-                        new Address(from),
-                        new Uint256(tokenId),
-                        new DynamicBytes(data)),
+                new Address(from),
+                new Uint256(tokenId),
+                new DynamicBytes(data)),
                 Collections.<TypeReference<?>>emptyList());
         return createRawTransaction(function);
     }
 
     public Single<RawTransaction> deposit(String _token, String _user, BigInteger _amount) {
         final Function function = new Function(
-                FUNC_DEPOSIT,
+                FUNC_DEPOSIT, 
                 Arrays.<Type>asList(new Address(_token),
-                        new Address(_user),
-                        new Uint256(_amount)),
+                new Address(_user),
+                new Uint256(_amount)),
                 Collections.<TypeReference<?>>emptyList());
         return createRawTransaction(function);
     }
 
     public Single<RawTransaction> transferAmount(String _token, String _user, BigInteger _amount) {
         final Function function = new Function(
-                FUNC_TRANSFERAMOUNT,
+                FUNC_TRANSFERAMOUNT, 
                 Arrays.<Type>asList(new Address(_token),
-                        new Address(_user),
-                        new Uint256(_amount)),
+                new Address(_user),
+                new Uint256(_amount)),
                 Collections.<TypeReference<?>>emptyList());
         return createRawTransaction(function);
     }
 
     public Single<RawTransaction> tokenFallback(String _user, BigInteger _amount, byte[] _data) {
         final Function function = new Function(
-                FUNC_TOKENFALLBACK,
+                FUNC_TOKENFALLBACK, 
                 Arrays.<Type>asList(new Address(_user),
-                        new Uint256(_amount),
-                        new DynamicBytes(_data)),
+                new Uint256(_amount),
+                new DynamicBytes(_data)),
                 Collections.<TypeReference<?>>emptyList());
         return createRawTransaction(function);
     }
 
     public Single<RawTransaction> finalizeCommit(BigInteger param0) {
         final Function function = new Function(
-                FUNC_FINALIZECOMMIT,
+                FUNC_FINALIZECOMMIT, 
                 Arrays.<Type>asList(new Uint256(param0)),
                 Collections.<TypeReference<?>>emptyList());
         return createRawTransaction(function);
@@ -598,7 +662,7 @@ public class RootChain extends Contract {
 
     public Single<RawTransaction> slash() {
         final Function function = new Function(
-                FUNC_SLASH,
+                FUNC_SLASH, 
                 Arrays.<Type>asList(),
                 Collections.<TypeReference<?>>emptyList());
         return createRawTransaction(function);
