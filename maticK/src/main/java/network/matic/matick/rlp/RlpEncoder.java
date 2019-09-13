@@ -22,7 +22,7 @@ public class RlpEncoder {
         }
     }
 
-    private static byte[] encode(byte[] bytesValue, int offset) {
+    public static byte[] encode(byte[] bytesValue, int offset) {
         if (bytesValue.length == 1
                 && offset == OFFSET_SHORT_STRING
                 && bytesValue[0] >= (byte) 0x00

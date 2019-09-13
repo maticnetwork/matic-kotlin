@@ -36,6 +36,7 @@ import network.matic.matick.crypto.Credentials;
 import network.matic.matick.crypto.RawTransaction;
 import network.matic.matick.tuples.generated.Tuple2;
 import network.matic.matick.tuples.generated.Tuple4;
+import network.matic.matick.utils.utils.Numeric;
 
 /**
  * <p>Auto generated code.

@@ -2,7 +2,6 @@ package network.matic.maticsdkkotlin
 
 import io.reactivex.schedulers.Schedulers
 import network.matic.matick.Matick
-import java.math.BigInteger
 
 object TestMaticK {
     fun initWeb3() {
@@ -30,7 +29,7 @@ object TestMaticK {
 //        matick.getERC20Balance("0xc82c13004c06E4c627cF2518612A55CE7a3Db699","0x9fB29AAc15b9A4B7F17c3385939b007540f4d791", false)
 //            .subscribeOn(Schedulers.io())
 //            .subscribe({
-//            println("hello ${it}")
+//            println("Balance ${it}")
 //        },{
 //            it.printStackTrace()
 //        })
@@ -93,10 +92,14 @@ object TestMaticK {
 //        matick.getReceiptProof("0xc79e89838582267224b4bb6491661b12dffdd0cf0fdc65c71bfb104dac532d56")
         matick.withdraw(
             ConfigTest.WITHDRAWMANAGER_ADDRESS,
-            "0x3a50a99a47d408887517d1dc086fdee631e134447e584394e1eeb6ff5a8fef69"
-        )
-
-
+            "0xb92432e34a637582f196b7cd46978301d888aa4b8ed43c2772fb73a1a2a4b403"
+//            "0x3a50a99a47d408887517d1dc086fdee631e134447e584394e1eeb6ff5a8fef69"
+        ).subscribeOn(Schedulers.io())
+            .subscribe({
+                println("hello it ${it.transactionHash}")
+            }, {
+                it.printStackTrace()
+            })
     }
 
 }

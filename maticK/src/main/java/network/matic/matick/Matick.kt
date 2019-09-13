@@ -21,22 +21,10 @@ import network.matic.matick.model.Header
 import network.matic.matick.model.TransactionModel
 import network.matic.matick.model.TxProofModel
 import network.matic.matick.model.WatcherModel
+import network.matic.matick.rlp.*
 import network.matic.matick.utils.utils.Numeric
 import java.math.BigInteger
-import java.io.ByteArrayInputStream
-import java.io.ObjectInputStream
-import java.io.ByteArrayOutputStream
-import java.io.ObjectOutputStream
-import retrofit2.adapter.rxjava2.Result.response
-import network.matic.matick.core.protocol.core.methods.response.EthGetTransactionCount
-import network.matic.matick.core.protocol.core.methods.response.EthGetBalance
-import network.matic.matick.rlp.RlpEncoder
-import network.matic.matick.rlp.RlpList
-import network.matic.matick.rlp.RlpString
-import network.matic.matick.rlp.RlpType
-import okhttp3.internal.concat
-import java.util.ArrayList
-import kotlin.experimental.and
+import java.util.*
 
 
 private val hexArray = "0123456789ABCDEF".toCharArray()
@@ -92,7 +80,6 @@ class Matick {
                 GasObject(gasPrice.gasPrice, gasLimit.amountUsed)
             }
         ).map {
-            println("gas ${it.ethEstimateGas}")
             ChildERC20.load(
                 contractAddress,
                 if (parent) web3jParent else web3j,
@@ -127,7 +114,6 @@ class Matick {
                 GasObject(gasPrice.gasPrice, gasLimit.amountUsed)
             }
         ).map {
-            println("gas ${it.ethEstimateGas}")
             RootChain.load(
                 contractAddress,
                 if (parent) web3jParent else web3j,
@@ -148,7 +134,6 @@ class Matick {
                 GasObject(gasPrice.gasPrice, gasLimit.amountUsed)
             }
         ).map {
-            println("gas ${it.ethEstimateGas}")
             StandardToken.load(
                 contractAddress,
                 if (parent) web3jParent else web3j,
@@ -169,7 +154,6 @@ class Matick {
                 GasObject(gasPrice.gasPrice, gasLimit.amountUsed)
             }
         ).map {
-            println("gas ${it.ethEstimateGas}")
             DepositManager.load(
                 contractAddress,
                 if (parent) web3jParent else web3j,
@@ -190,7 +174,6 @@ class Matick {
                 GasObject(gasPrice.gasPrice, gasLimit.amountUsed)
             }
         ).map {
-            println("gas ${it.ethEstimateGas}")
             WithdrawManager.load(
                 contractAddress,
                 if (parent) web3jParent else web3j,
@@ -487,28 +470,11 @@ class Matick {
 
     }
 
-    fun bytesToHex(bytes: ByteArray): String {
-        val hexChars = CharArray(bytes.size * 2)
-        for (j in bytes.indices) {
-            val v = (bytes[j] and 0xFF.toByte()).toInt()
-            hexChars[j * 2] = hexArray[v ushr 4]
-            hexChars[j * 2 + 1] = hexArray[v and 0x0F]
-        }
-        return String(hexChars)
-    }
-
-    fun hexToBytes(str: String) : ByteArray {
-        val result = ByteArray(str.length / 2)
-        for (i in 0 until str.length step 2) {
-            val firstIndex = hexArray.indexOf(str[i]);
-            val secondIndex = hexArray.indexOf(str[i + 1]);
-            val octet = firstIndex.shl(4).or(secondIndex)
-            result.set(i.shr(1), octet.toByte())
-        }
-        return result
-    }
-
-    fun withdraw(contractAddress: String, txHash: String, parent: Boolean = true) {
+    fun withdraw(
+        contractAddress: String,
+        txHash: String,
+        parent: Boolean = true
+    ): Flowable<EthSendTransaction> {
         var txProof = getTxProof(txHash)
         var receiptProof = getReceiptProof(txHash)
         var header = getHeaderObject(txProof.blockingGet().proof.blockNumber)
@@ -519,64 +485,45 @@ class Matick {
             header.blockingGet().end
         )
 
-        var d = headerProof.blockingGet().proof.proof.joinToString("").replace("0x", "")
-
+        var trimmedProof = headerProof.blockingGet().proof.proof.joinToString("").replace("0x", "")
         val sPath = receiptProof.blockingGet().proof.path
-
+        var t = Numeric.hexStringToByteArray(sPath)
         val values = ArrayList<RlpType>()
         values.add(RlpString.create(sPath))
 
         val rlpList = RlpList(values)
-
-        val encoderRlp = RlpEncoder.encode(rlpList)
-
+//        val encoderRlp = RlpEncoder.encode(rlpList)
 
 
+        // TODO: Offset is harcoded here, not good approch need to think on this
+        val encoderRlp = RlpEncoder.encode(t, RlpDecoder.OFFSET_SHORT_STRING)
+
+        val hexValue = Numeric.toHexString(encoderRlp)
 
 
-        // println("headerProof ${headerProof.blockingGet()}")
-        // println("1->>>> ${BigInteger.valueOf(header.blockingGet().number.toLong())}")
-        // println("2->>>> ${hexToBytes(d)}")
-        // println("3->>>> ${BigInteger.valueOf(txProof.blockingGet().proof.blockNumber.toLong())}")
-        // println("4->>>> ${BigInteger.valueOf(txProof.blockingGet().proof.blockTimestamp.toLong())}")
-        // println("5->>>> ${txProof.blockingGet().proof.root}")
-        // println("6->>>> ${receiptProof.blockingGet().proof.root.toByteArray()}")
-        // println("7->>>> ${encoderRlp}")
-        // println("8->>>> ${txProof.blockingGet().proof.value.toByteArray()}")
-        // println("9->>>> ${txProof.blockingGet().proof.parentNodes.toByteArray()}")
-        // println("10->>>> ${receiptProof.blockingGet().proof.value.toByteArray()}")
-        // println("11->>>> ${receiptProof.blockingGet().proof.parentNodes.toByteArray()}")
-
-        loadWithdrawMangerContract(contractAddress, parent).flatMapSingle {
+        return loadWithdrawMangerContract(contractAddress, parent).flatMapSingle {
             it.withdrawBurntTokens(
                 BigInteger.valueOf(header.blockingGet().number.toLong()),
-                hexToBytes(d),
+                Numeric.hexStringToByteArray(trimmedProof),
                 BigInteger.valueOf(txProof.blockingGet().proof.blockNumber.toLong()),
                 BigInteger.valueOf(txProof.blockingGet().proof.blockTimestamp.toLong()),
-                txProof.blockingGet().proof.root.toByteArray(),
-                receiptProof.blockingGet().proof.root.toByteArray(),
-                encoderRlp,
-                txProof.blockingGet().proof.value.toByteArray(),
-                txProof.blockingGet().proof.parentNodes.toByteArray(),
-                receiptProof.blockingGet().proof.value.toByteArray(),
-                receiptProof.blockingGet().proof.parentNodes.toByteArray()
+                Numeric.hexStringToByteArray(txProof.blockingGet().proof.root),
+                Numeric.hexStringToByteArray(receiptProof.blockingGet().proof.root),
+                Numeric.hexStringToByteArray(hexValue),
+                Numeric.hexStringToByteArray(txProof.blockingGet().proof.value),
+                Numeric.hexStringToByteArray(txProof.blockingGet().proof.parentNodes),
+                Numeric.hexStringToByteArray(receiptProof.blockingGet().proof.value),
+                Numeric.hexStringToByteArray(receiptProof.blockingGet().proof.parentNodes)
             )
         }.map {
-            println("raw tx ${it}")
-//            val signedTransaction = TransactionEncoder.signMessage(
-//                it, Credentials.create(
-//                    ConfigUtils.privateKey
-//                )
-//            )
-//            val hexValue = Numeric.toHexString(signedTransaction)
-//            web3j.ethSendRawTransaction(hexValue).send()
-        }.subscribeOn(Schedulers.io())
-            .subscribe({
-                println(it)
-            },{
-                print("errr")
-                it.printStackTrace()
-            })
+            val signedTransaction = TransactionEncoder.signMessage(
+                it, Credentials.create(
+                    ConfigUtils.privateKey
+                )
+            )
+            val hexValue = Numeric.toHexString(signedTransaction)
+            web3j.ethSendRawTransaction(hexValue).send()
+        }
     }
 
     fun processExits(contractAddress: String, parent: Boolean = true) {

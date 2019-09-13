@@ -2,6 +2,7 @@ package network.matic.matick.abi;
 
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
 import network.matic.matick.abi.datatypes.Function;
@@ -57,7 +58,7 @@ public class FunctionEncoder {
             }
         }
         result.append(dynamicData);
-
+        
         return result.toString();
     }
 
