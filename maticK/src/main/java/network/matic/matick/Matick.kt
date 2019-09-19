@@ -171,7 +171,7 @@ class MaticK(private val networkConfig: NetworkConfig, private val credentials: 
         }
     }
 
-    fun getEtherBalance() = web3j.ethGetBalance(
+    fun getEtherBalance() = web3jParent.ethGetBalance(
         fromAddress,
         DefaultBlockParameterName.LATEST
     )
@@ -239,7 +239,7 @@ class MaticK(private val networkConfig: NetworkConfig, private val credentials: 
                     it, credentials
                 )
                 val hexValue = Numeric.toHexString(signedTransaction)
-                web3j.ethSendRawTransaction(hexValue).flowable()
+                web3jParent.ethSendRawTransaction(hexValue).flowable()
             }
     }
 
@@ -256,7 +256,7 @@ class MaticK(private val networkConfig: NetworkConfig, private val credentials: 
                     it, credentials
                 )
                 val hexValue = Numeric.toHexString(signedTransaction)
-                web3j.ethSendRawTransaction(hexValue).flowable()
+                web3jParent.ethSendRawTransaction(hexValue).flowable()
             }
     }
 
@@ -277,7 +277,7 @@ class MaticK(private val networkConfig: NetworkConfig, private val credentials: 
                     it, credentials
                 )
                 val hexValue = Numeric.toHexString(signedTransaction)
-                web3j.ethSendRawTransaction(hexValue).flowable()
+                web3jParent.ethSendRawTransaction(hexValue).flowable()
             }
     }
 
@@ -294,7 +294,7 @@ class MaticK(private val networkConfig: NetworkConfig, private val credentials: 
                     it, credentials
                 )
                 val hexValue = Numeric.toHexString(signedTransaction)
-                web3j.ethSendRawTransaction(hexValue).flowable()
+                web3jParent.ethSendRawTransaction(hexValue).flowable()
             }
     }
 
@@ -311,7 +311,7 @@ class MaticK(private val networkConfig: NetworkConfig, private val credentials: 
                     it, credentials
                 )
                 val hexValue = Numeric.toHexString(signedTransaction)
-                web3j.ethSendRawTransaction(hexValue).flowable()
+                web3jParent.ethSendRawTransaction(hexValue).flowable()
             }
     }
 
@@ -321,16 +321,20 @@ class MaticK(private val networkConfig: NetworkConfig, private val credentials: 
         amount: BigInteger,
         parent: Boolean = false
     ): Flowable<EthSendTransaction> {
-        return loadERC20Contract(contractAddress, parent)
-            .flatMapSingle {
-                it.transfer(recipientAddress, amount)
-            }.flatMap {
-                val signedTransaction = TransactionEncoder.signMessage(
-                    it, credentials
-                )
-                val hexValue = Numeric.toHexString(signedTransaction)
-                web3j.ethSendRawTransaction(hexValue).flowable()
-            }
+        with(if (parent) web3jParent else web3j) {
+            return loadERC20Contract(contractAddress, parent)
+                .flatMapSingle {
+                    it.transfer(recipientAddress, amount)
+                }.flatMap {
+                    val signedTransaction = TransactionEncoder.signMessage(
+                        it, credentials
+                    )
+                    println(signedTransaction.size)
+                    val hexValue = Numeric.toHexString(signedTransaction)
+                    println(hexValue)
+                    ethSendRawTransaction(hexValue).flowable()
+                }
+        }
     }
 
     fun transferERC721Tokens(
@@ -339,14 +343,16 @@ class MaticK(private val networkConfig: NetworkConfig, private val credentials: 
         amount: BigInteger,
         parent: Boolean = false
     ): Flowable<EthSendTransaction> {
-        return loadERC721Contract(contractAddress, parent).flatMapSingle {
-            it.transferFrom(fromAddress, recipientAddress, amount)
-        }.flatMap {
-            val signedTransaction = TransactionEncoder.signMessage(
-                it, credentials
-            )
-            val hexValue = Numeric.toHexString(signedTransaction)
-            web3j.ethSendRawTransaction(hexValue).flowable()
+        with(if (parent) web3jParent else web3j) {
+            return loadERC721Contract(contractAddress, parent).flatMapSingle {
+                it.transferFrom(fromAddress, recipientAddress, amount)
+            }.flatMap {
+                val signedTransaction = TransactionEncoder.signMessage(
+                    it, credentials
+                )
+                val hexValue = Numeric.toHexString(signedTransaction)
+                ethSendRawTransaction(hexValue).flowable()
+            }
         }
     }
 
@@ -483,7 +489,7 @@ class MaticK(private val networkConfig: NetworkConfig, private val credentials: 
                 it, credentials
             )
             val hexValue = Numeric.toHexString(signedTransaction)
-            web3j.ethSendRawTransaction(hexValue).flowable()
+            web3jParent.ethSendRawTransaction(hexValue).flowable()
         }
     }
 
