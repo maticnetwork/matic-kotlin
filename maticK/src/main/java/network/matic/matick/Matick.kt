@@ -26,65 +26,33 @@ import network.matic.matick.utils.utils.Numeric
 import java.math.BigInteger
 import java.util.*
 
+class MaticK(private val networkConfig: NetworkConfig) {
 
-private val hexArray = "0123456789ABCDEF".toCharArray()
-
-
-//internal class ConfigUtils(
-//    var web3j: Web3j,
-//    var web3jParent: Web3j,
-//    var syncerUrl : String,
-//    var watcherUrl : String,
-//    var rootChainAddress : String,
-//    var rootWethAddress : String,
-//    var childWethAddress : String,
-//    var withdrawManagerAddress : String,
-//    var depositManagerAddress : String
-//)
-
-
-internal class GasObject(
-    val ethGasPrice: BigInteger,
-    val ethEstimateGas: BigInteger
-)
-
-class Matick {
-    private var web3j: Web3j
-    private var web3jParent: Web3j
-    private var syncerUrl: String
-    private var watcherUrl: String
-    private var rootChainAddress: String
-    private var rootWethAddress: String
-    private var childWethAddress: String
-    private var withdrawManagerAddress: String
-    private var depositManagerAddress: String
-
-
-    constructor() {
-        web3j = Web3j.build(HttpService(ConfigUtils.MATIC_PROVIDER))
-        web3jParent = Web3j.build(HttpService(ConfigUtils.PARENT_PROVIDER))
-        syncerUrl = ConfigUtils.SYNCER_URL
-        watcherUrl = ConfigUtils.WATCHER_URL
-        rootChainAddress = ConfigUtils.ROOTCHAIN_ADDRESS
-        rootWethAddress = ConfigUtils.ROOTWETH_ADDRESS
-        childWethAddress = ConfigUtils.MATICWETH_ADDRESS
-        withdrawManagerAddress = ConfigUtils.WITHDRAWMANAGER_ADDRESS
-        depositManagerAddress = ConfigUtils.DEPOSITMANAGER_ADDRESS
-    }
+    private lateinit var credentials: Credentials
+    private lateinit var fromAddress: String
+    private var web3j: Web3j = Web3j.build(HttpService(networkConfig.MATIC_PROVIDER))
+    private var web3jParent: Web3j = Web3j.build(HttpService(networkConfig.PARENT_PROVIDER))
+    private var syncerUrl: String = networkConfig.SYNCER_URL
+    private var watcherUrl: String = networkConfig.WATCHER_URL
+    private var rootChainAddress: String = networkConfig.ROOT_CONTRACT_ADDRESS
+    private var rootWethAddress: String = networkConfig.ROOT_WETH_ADDRESS
+    private var childWethAddress: String = networkConfig.MATIC_WETH_ADDRESS
+    private var withdrawManagerAddress: String = networkConfig.WITHDRAW_MANAGER_ADDRESS
+    private var depositManagerAddress: String = networkConfig.DEPOSIT_MANAGER_ADDRESS
 
     fun loadERC20Contract(contractAddress: String, parent: Boolean): Flowable<ChildERC20> {
 
         return getGasPrice().zipWith(
             estimateGasLimit(),
             BiFunction { gasPrice: EthGasPrice, gasLimit: EthEstimateGas ->
-                GasObject(gasPrice.gasPrice, gasLimit.amountUsed)
+                CustomContractGasProvider(gasPrice.gasPrice, gasLimit.amountUsed)
             }
         ).map {
             ChildERC20.load(
                 contractAddress,
                 if (parent) web3jParent else web3j,
-                Credentials.create(ConfigUtils.PRIVATE_KEY),
-                CustomContractGasProvider(it.ethGasPrice, BigInteger.ZERO)
+                credentials,
+                CustomContractGasProvider(it.gasPrice, BigInteger.ZERO)
             )
         }
     }
@@ -94,14 +62,14 @@ class Matick {
         return getGasPrice().zipWith(
             estimateGasLimit(),
             BiFunction { gasPrice: EthGasPrice, gasLimit: EthEstimateGas ->
-                GasObject(gasPrice.gasPrice, gasLimit.amountUsed)
+                CustomContractGasProvider(gasPrice.gasPrice, gasLimit.amountUsed)
             }
         ).map {
             ChildERC721.load(
                 contractAddress,
                 if (parent) web3jParent else web3j,
-                Credentials.create(ConfigUtils.PRIVATE_KEY),
-                CustomContractGasProvider(it.ethGasPrice, BigInteger.ZERO)
+                credentials,
+                CustomContractGasProvider(it.gasPrice, BigInteger.ZERO)
             )
         }
     }
@@ -111,14 +79,14 @@ class Matick {
         return getGasPrice().zipWith(
             estimateGasLimit(),
             BiFunction { gasPrice: EthGasPrice, gasLimit: EthEstimateGas ->
-                GasObject(gasPrice.gasPrice, gasLimit.amountUsed)
+                CustomContractGasProvider(gasPrice.gasPrice, gasLimit.amountUsed)
             }
         ).map {
             RootChain.load(
                 contractAddress,
                 if (parent) web3jParent else web3j,
-                Credentials.create(ConfigUtils.PRIVATE_KEY),
-                CustomContractGasProvider(it.ethGasPrice, BigInteger.ZERO)
+                credentials,
+                CustomContractGasProvider(it.gasPrice, BigInteger.ZERO)
             )
         }
     }
@@ -131,14 +99,14 @@ class Matick {
         return getGasPrice().zipWith(
             estimateGasLimit(),
             BiFunction { gasPrice: EthGasPrice, gasLimit: EthEstimateGas ->
-                GasObject(gasPrice.gasPrice, gasLimit.amountUsed)
+                CustomContractGasProvider(gasPrice.gasPrice, gasLimit.amountUsed)
             }
         ).map {
             StandardToken.load(
                 contractAddress,
                 if (parent) web3jParent else web3j,
-                Credentials.create(ConfigUtils.PRIVATE_KEY),
-                CustomContractGasProvider(it.ethGasPrice, BigInteger.ZERO)
+                credentials,
+                CustomContractGasProvider(it.gasPrice, BigInteger.ZERO)
             )
         }
     }
@@ -151,14 +119,14 @@ class Matick {
         return getGasPrice().zipWith(
             estimateGasLimit(),
             BiFunction { gasPrice: EthGasPrice, gasLimit: EthEstimateGas ->
-                GasObject(gasPrice.gasPrice, gasLimit.amountUsed)
+                CustomContractGasProvider(gasPrice.gasPrice, gasLimit.amountUsed)
             }
         ).map {
             DepositManager.load(
                 contractAddress,
                 if (parent) web3jParent else web3j,
-                Credentials.create(ConfigUtils.PRIVATE_KEY),
-                CustomContractGasProvider(it.ethGasPrice, BigInteger.ZERO)
+                credentials,
+                CustomContractGasProvider(it.gasPrice, BigInteger.ZERO)
             )
         }
     }
@@ -171,20 +139,20 @@ class Matick {
         return getGasPrice().zipWith(
             estimateGasLimit(),
             BiFunction { gasPrice: EthGasPrice, gasLimit: EthEstimateGas ->
-                GasObject(gasPrice.gasPrice, gasLimit.amountUsed)
+                CustomContractGasProvider(gasPrice.gasPrice, gasLimit.amountUsed)
             }
         ).map {
             WithdrawManager.load(
                 contractAddress,
                 if (parent) web3jParent else web3j,
-                Credentials.create(ConfigUtils.PRIVATE_KEY),
-                CustomContractGasProvider(it.ethGasPrice, BigInteger.ZERO)
+                credentials,
+                CustomContractGasProvider(it.gasPrice, BigInteger.ZERO)
             )
         }
     }
 
     fun getEtherBalance() = web3j.ethGetBalance(
-        ConfigUtils.FROM_ADDRESS,
+        fromAddress,
         DefaultBlockParameterName.LATEST
     )
 
@@ -193,14 +161,14 @@ class Matick {
 
     fun estimateGasLimit(data: String = "0x") = web3j.ethEstimateGas(
         Transaction.createEthCallTransaction(
-            ConfigUtils.FROM_ADDRESS,
-            ConfigUtils.recipientAddress,
+            fromAddress,
+            fromAddress,
             data
         )
     ).flowable()
 
     fun getNonce() = web3j.ethGetTransactionCount(
-        ConfigUtils.FROM_ADDRESS, DefaultBlockParameterName.LATEST
+        fromAddress, DefaultBlockParameterName.LATEST
     )
 
     fun getERC20Balance(
@@ -248,13 +216,11 @@ class Matick {
     ): Flowable<EthSendTransaction> {
         return loadStandardTokenContract(contractAddress, parent)
             .flatMapSingle {
-                it.approve(ConfigUtils.ROOTCHAIN_ADDRESS, amount)
+                it.approve(rootChainAddress, amount)
             }
             .map {
                 val signedTransaction = TransactionEncoder.signMessage(
-                    it, Credentials.create(
-                        ConfigUtils.privateKey
-                    )
+                    it, credentials
                 )
                 val hexValue = Numeric.toHexString(signedTransaction)
                 web3j.ethSendRawTransaction(hexValue).send()
@@ -268,12 +234,10 @@ class Matick {
     ): Flowable<EthSendTransaction> {
         return loadRootChainContract(contractAddress, parent)
             .flatMapSingle {
-                it.deposit(contractAddress, ConfigUtils.FROM_ADDRESS, amount)
+                it.deposit(contractAddress, fromAddress, amount)
             }.map {
                 val signedTransaction = TransactionEncoder.signMessage(
-                    it, Credentials.create(
-                        ConfigUtils.privateKey
-                    )
+                    it, credentials
                 )
                 val hexValue = Numeric.toHexString(signedTransaction)
                 web3j.ethSendRawTransaction(hexValue).send()
@@ -288,15 +252,13 @@ class Matick {
         return loadERC721Contract(contractAddress, parent)
             .flatMapSingle {
                 it.safeTransferFrom(
-                    ConfigUtils.FROM_ADDRESS,
-                    ConfigUtils.ROOTCHAIN_ADDRESS,
+                    fromAddress,
+                    rootChainAddress,
                     amount
                 )
             }.map {
                 val signedTransaction = TransactionEncoder.signMessage(
-                    it, Credentials.create(
-                        ConfigUtils.privateKey
-                    )
+                    it, credentials
                 )
                 val hexValue = Numeric.toHexString(signedTransaction)
                 web3j.ethSendRawTransaction(hexValue).send()
@@ -310,12 +272,10 @@ class Matick {
     ): Flowable<EthSendTransaction> {
         return loadERC721Contract(contractAddress, parent)
             .flatMapSingle {
-                it.approve(ConfigUtils.ROOTCHAIN_ADDRESS, amount)
+                it.approve(rootChainAddress, amount)
             }.map {
                 val signedTransaction = TransactionEncoder.signMessage(
-                    it, Credentials.create(
-                        ConfigUtils.privateKey
-                    )
+                    it, credentials
                 )
                 val hexValue = Numeric.toHexString(signedTransaction)
                 web3j.ethSendRawTransaction(hexValue).send()
@@ -329,12 +289,10 @@ class Matick {
     ): Flowable<EthSendTransaction> {
         return loadRootChainContract(contractAddress, parent)
             .flatMapSingle {
-                it.depositERC721(contractAddress, ConfigUtils.FROM_ADDRESS, amount)
+                it.depositERC721(contractAddress, fromAddress, amount)
             }.map {
                 val signedTransaction = TransactionEncoder.signMessage(
-                    it, Credentials.create(
-                        ConfigUtils.privateKey
-                    )
+                    it, credentials
                 )
                 val hexValue = Numeric.toHexString(signedTransaction)
                 web3j.ethSendRawTransaction(hexValue).send()
@@ -347,14 +305,13 @@ class Matick {
         amount: BigInteger,
         parent: Boolean = false
     ): Flowable<EthSendTransaction> {
+        System.out.println("syncer" + syncerUrl)
         return loadERC20Contract(contractAddress, parent)
             .flatMapSingle {
                 it.transfer(receipentAddress, amount)
             }.map {
                 val signedTransaction = TransactionEncoder.signMessage(
-                    it, Credentials.create(
-                        ConfigUtils.privateKey
-                    )
+                    it, credentials
                 )
                 val hexValue = Numeric.toHexString(signedTransaction)
                 web3j.ethSendRawTransaction(hexValue).send()
@@ -368,12 +325,10 @@ class Matick {
         parent: Boolean = false
     ): Flowable<EthSendTransaction> {
         return loadERC721Contract(contractAddress, parent).flatMapSingle {
-            it.transferFrom(ConfigUtils.FROM_ADDRESS, receipentAddress, amount)
+            it.transferFrom(fromAddress, receipentAddress, amount)
         }.map {
             val signedTransaction = TransactionEncoder.signMessage(
-                it, Credentials.create(
-                    ConfigUtils.privateKey
-                )
+                it, credentials
             )
             val hexValue = Numeric.toHexString(signedTransaction)
             web3j.ethSendRawTransaction(hexValue).send()
@@ -395,9 +350,7 @@ class Matick {
             }
             .map {
                 val signedTransaction = TransactionEncoder.signMessage(
-                    it, Credentials.create(
-                        ConfigUtils.privateKey
-                    )
+                    it, credentials
                 )
                 val hexValue = Numeric.toHexString(signedTransaction)
                 web3j.ethSendRawTransaction(hexValue).send()
@@ -414,9 +367,7 @@ class Matick {
                 it.withdraw(amount)
             }.map {
                 val signedTransaction = TransactionEncoder.signMessage(
-                    it, Credentials.create(
-                        ConfigUtils.privateKey
-                    )
+                    it, credentials
                 )
                 val hexValue = Numeric.toHexString(signedTransaction)
                 web3j.ethSendRawTransaction(hexValue).send()
@@ -475,27 +426,26 @@ class Matick {
         txHash: String,
         parent: Boolean = true
     ): Flowable<EthSendTransaction> {
-        var txProof = getTxProof(txHash)
-        var receiptProof = getReceiptProof(txHash)
-        var header = getHeaderObject(txProof.blockingGet().proof.blockNumber)
+        val txProof = getTxProof(txHash)
+        val receiptProof = getReceiptProof(txHash)
+        val header = getHeaderObject(txProof.blockingGet().proof.blockNumber)
 
-        var headerProof = getHeaderProof(
+        val headerProof = getHeaderProof(
             txProof.blockingGet().proof.blockNumber,
             header.blockingGet().start,
             header.blockingGet().end
         )
 
-        var trimmedProof = headerProof.blockingGet().proof.proof.joinToString("").replace("0x", "")
+        val trimmedProof = headerProof.blockingGet().proof.proof.joinToString("").replace("0x", "")
         val sPath = receiptProof.blockingGet().proof.path
-        var t = Numeric.hexStringToByteArray(sPath)
+        val t = Numeric.hexStringToByteArray(sPath)
         val values = ArrayList<RlpType>()
         values.add(RlpString.create(sPath))
 
-        val rlpList = RlpList(values)
+        // TODO: Offset is hardcoded here, not good approach need to think on this
+//        val rlpList = RlpList(values)
 //        val encoderRlp = RlpEncoder.encode(rlpList)
 
-
-        // TODO: Offset is harcoded here, not good approch need to think on this
         val encoderRlp = RlpEncoder.encode(t, RlpDecoder.OFFSET_SHORT_STRING)
 
         val hexValue = Numeric.toHexString(encoderRlp)
@@ -517,9 +467,7 @@ class Matick {
             )
         }.map {
             val signedTransaction = TransactionEncoder.signMessage(
-                it, Credentials.create(
-                    ConfigUtils.privateKey
-                )
+                it, credentials
             )
             val hexValue = Numeric.toHexString(signedTransaction)
             web3j.ethSendRawTransaction(hexValue).send()
@@ -527,16 +475,22 @@ class Matick {
     }
 
     fun processExits(contractAddress: String, parent: Boolean = true) {
+        /**
+         * TODO
+         */
+    }
 
+    fun setWallet(privateKey: String) {
+        credentials = Credentials.create(privateKey)
+        fromAddress = credentials.address
     }
 
 }
 
 internal class CustomContractGasProvider(
-    val ethGasPrice: BigInteger,
-    val ethGasLimit: BigInteger
-) :
-    ContractGasProvider {
+    private val ethGasPrice: BigInteger,
+    private val ethGasLimit: BigInteger
+) : ContractGasProvider {
 
     override fun getGasLimit(contractFunc: String?): BigInteger {
         return ethGasLimit

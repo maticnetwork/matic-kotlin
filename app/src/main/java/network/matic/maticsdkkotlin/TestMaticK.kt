@@ -1,11 +1,14 @@
 package network.matic.maticsdkkotlin
 
 import io.reactivex.schedulers.Schedulers
-import network.matic.matick.Matick
+import network.matic.matick.NetworkConfig
+import network.matic.matick.MaticK
+import java.math.BigInteger
 
 object TestMaticK {
     fun initWeb3() {
-        var matick = Matick()
+
+        val matick = MaticK(TestNet1())
 //        matick.getGasPrice()
 //            .subscribeOn(Schedulers.io())
 //            .observeOn(AndroidSchedulers.mainThread())
@@ -34,13 +37,13 @@ object TestMaticK {
 //            it.printStackTrace()
 //        })
 
-//        matick.transferTokens(ConfigTest.FROM_ADDRESS, ConfigTest.MATIC_TEST_TOKEN, BigInteger.valueOf(100000000000000000), false)
-//            .subscribeOn(Schedulers.io())
-//            .subscribe({
-//                println("hello it ${it.transactionHash}")
-//            },{
-//                it.printStackTrace()
-//            })
+        matick.transferTokens(ConfigTest.FROM_ADDRESS, ConfigTest.MATIC_TEST_TOKEN, BigInteger.valueOf(100000000000000000), false)
+            .subscribeOn(Schedulers.io())
+            .subscribe({
+                println("hello it ${it.transactionHash}")
+            },{
+                it.printStackTrace()
+            })
 
 //        matick.startWithdraw(
 //            ConfigTest.MATIC_TEST_TOKEN,
@@ -91,7 +94,7 @@ object TestMaticK {
 //        matick.getTxProof("0xc79e89838582267224b4bb6491661b12dffdd0cf0fdc65c71bfb104dac532d56")
 //        matick.getReceiptProof("0xc79e89838582267224b4bb6491661b12dffdd0cf0fdc65c71bfb104dac532d56")
         matick.withdraw(
-            ConfigTest.WITHDRAWMANAGER_ADDRESS,
+            ConfigTest.WITHDRAW_MANAGER_ADDRESS,
             "0xb92432e34a637582f196b7cd46978301d888aa4b8ed43c2772fb73a1a2a4b403"
 //            "0x3a50a99a47d408887517d1dc086fdee631e134447e584394e1eeb6ff5a8fef69"
         ).subscribeOn(Schedulers.io())
