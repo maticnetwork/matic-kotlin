@@ -21,15 +21,16 @@ import network.matic.matick.model.Header
 import network.matic.matick.model.TransactionModel
 import network.matic.matick.model.TxProofModel
 import network.matic.matick.model.WatcherModel
-import network.matic.matick.rlp.*
+import network.matic.matick.rlp.RlpDecoder
+import network.matic.matick.rlp.RlpEncoder
+import network.matic.matick.rlp.RlpString
+import network.matic.matick.rlp.RlpType
 import network.matic.matick.utils.utils.Numeric
 import java.math.BigInteger
 import java.util.*
 
-class MaticK(private val networkConfig: NetworkConfig) {
-
-    private lateinit var credentials: Credentials
-    private lateinit var fromAddress: String
+class MaticK(private val networkConfig: NetworkConfig, private val credentials: Credentials) {
+    private var fromAddress = credentials.address
     private var web3j: Web3j = Web3j.build(HttpService(networkConfig.MATIC_PROVIDER))
     private var web3jParent: Web3j = Web3j.build(HttpService(networkConfig.PARENT_PROVIDER))
     private var syncerUrl: String = networkConfig.SYNCER_URL
@@ -39,10 +40,22 @@ class MaticK(private val networkConfig: NetworkConfig) {
     private var childWethAddress: String = networkConfig.MATIC_WETH_ADDRESS
     private var withdrawManagerAddress: String = networkConfig.WITHDRAW_MANAGER_ADDRESS
     private var depositManagerAddress: String = networkConfig.DEPOSIT_MANAGER_ADDRESS
+    private var syncerApiFactory = SyncerApiFactory(networkConfig)
+    private var watcherApiFactory = WatcherApiFactory(networkConfig)
 
     fun loadERC20Contract(contractAddress: String, parent: Boolean): Flowable<ChildERC20> {
+        var test = if(parent) networkConfig.PARENT_PROVIDER else networkConfig.MATIC_PROVIDER
+        println("test " + contractAddress)
+        return Flowable.just(
+            ChildERC20.load(
+                contractAddress,
+                if (parent) web3jParent else web3j,
+                credentials,
+                CustomContractGasProvider()
+            )
+        )
 
-        return getGasPrice().zipWith(
+        /*return getGasPrice().zipWith(
             estimateGasLimit(),
             BiFunction { gasPrice: EthGasPrice, gasLimit: EthEstimateGas ->
                 CustomContractGasProvider(gasPrice.gasPrice, gasLimit.amountUsed)
@@ -54,24 +67,31 @@ class MaticK(private val networkConfig: NetworkConfig) {
                 credentials,
                 CustomContractGasProvider(it.gasPrice, BigInteger.ZERO)
             )
-        }
+        }*/
     }
 
     fun loadERC721Contract(contractAddress: String, parent: Boolean): Flowable<ChildERC721> {
-
-        return getGasPrice().zipWith(
-            estimateGasLimit(),
-            BiFunction { gasPrice: EthGasPrice, gasLimit: EthEstimateGas ->
-                CustomContractGasProvider(gasPrice.gasPrice, gasLimit.amountUsed)
-            }
-        ).map {
+        return Flowable.just(
             ChildERC721.load(
                 contractAddress,
                 if (parent) web3jParent else web3j,
                 credentials,
-                CustomContractGasProvider(it.gasPrice, BigInteger.ZERO)
+                CustomContractGasProvider()
             )
-        }
+        )
+//        return getGasPrice().zipWith(
+//            estimateGasLimit(),
+//            BiFunction { gasPrice: EthGasPrice, gasLimit: EthEstimateGas ->
+//                CustomContractGasProvider(gasPrice.gasPrice, gasLimit.amountUsed)
+//            }
+//        ).map {
+//            ChildERC721.load(
+//                contractAddress,
+//                if (parent) web3jParent else web3j,
+//                credentials,
+//                CustomContractGasProvider(it.gasPrice, BigInteger.ZERO)
+//            )
+//        }
     }
 
     fun loadRootChainContract(contractAddress: String, parent: Boolean): Flowable<RootChain> {
@@ -305,7 +325,6 @@ class MaticK(private val networkConfig: NetworkConfig) {
         amount: BigInteger,
         parent: Boolean = false
     ): Flowable<EthSendTransaction> {
-        System.out.println("syncer" + syncerUrl)
         return loadERC20Contract(contractAddress, parent)
             .flatMapSingle {
                 it.transfer(receipentAddress, amount)
@@ -375,19 +394,19 @@ class MaticK(private val networkConfig: NetworkConfig) {
     }
 
     fun getTx(txHash: String): Single<TransactionModel> {
-        return SyncerApiFactory.getRetrofitInstance().getTransaction(txHash)
+        return syncerApiFactory.getRetrofitInstance().getTransaction(txHash)
             .subscribeOn(Schedulers.io())
 
     }
 
     fun getReceipt(txHash: String): Single<TransactionModel> {
-        return SyncerApiFactory.getRetrofitInstance().getTransactionReceipt(txHash)
+        return syncerApiFactory.getRetrofitInstance().getTransactionReceipt(txHash)
             .subscribeOn(Schedulers.io())
 
     }
 
     fun getTxProof(txHash: String): Single<TxProofModel> {
-        return SyncerApiFactory.getRetrofitInstance().getTxProof(txHash)
+        return syncerApiFactory.getRetrofitInstance().getTxProof(txHash)
             .subscribeOn(Schedulers.io())
     }
 
@@ -398,7 +417,7 @@ class MaticK(private val networkConfig: NetworkConfig) {
 
 
     fun getReceiptProof(txHash: String): Single<TxProofModel> {
-        return SyncerApiFactory.getRetrofitInstance().getReceiptProof(txHash)
+        return syncerApiFactory.getRetrofitInstance().getReceiptProof(txHash)
             .subscribeOn(Schedulers.io())
     }
 
@@ -408,12 +427,12 @@ class MaticK(private val networkConfig: NetworkConfig) {
 //    }
 //
     fun getHeaderObject(blockNumber: String): Single<WatcherModel> {
-        return WatcherApiFactory.getRetrofitInstance().getHeaderObject(blockNumber)
+        return watcherApiFactory.getRetrofitInstance().getHeaderObject(blockNumber)
             .subscribeOn(Schedulers.io())
     }
 
     fun getHeaderProof(blockNumber: String, start: String, end: String): Single<Header> {
-        return SyncerApiFactory.getRetrofitInstance().getHeaderProof(blockNumber, start, end)
+        return syncerApiFactory.getRetrofitInstance().getHeaderProof(blockNumber, start, end)
             .subscribeOn(Schedulers.io())
     }
 
@@ -480,16 +499,16 @@ class MaticK(private val networkConfig: NetworkConfig) {
          */
     }
 
-    fun setWallet(privateKey: String) {
+    /*fun setWallet(privateKey: String) {
         credentials = Credentials.create(privateKey)
         fromAddress = credentials.address
-    }
+    }*/
 
 }
 
 internal class CustomContractGasProvider(
-    private val ethGasPrice: BigInteger,
-    private val ethGasLimit: BigInteger
+    private val ethGasPrice: BigInteger = BigInteger.ZERO,
+    private val ethGasLimit: BigInteger = BigInteger.ZERO
 ) : ContractGasProvider {
 
     override fun getGasLimit(contractFunc: String?): BigInteger {

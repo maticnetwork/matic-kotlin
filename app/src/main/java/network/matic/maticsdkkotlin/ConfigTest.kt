@@ -30,7 +30,7 @@ object ConfigTest {
         "0xA5F9C331D6C628B9C3D6DB78BDA1266781F505A18D953409931B83798EF5AB1F" // A sample private key prefix with `0x`
     const val FROM_ADDRESS = "0x7eD7f36694153bA6EfF6ca6726b60F6E2Bb17fcf"// Your address
     const val ROPSTEN_TEST_TOKEN =
-        "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0" // Contract for ERC20 in Ropsten
+        "0x70459e550254b9d3520a56ee95b78ee4f2dbd846" // Contract for ERC20 in Ropsten
     const val MATIC_TEST_TOKEN =
         "0xc82c13004c06E4c627cF2518612A55CE7a3Db699" // Contract for ERC20 in Matic testnet
     const val ROPSTEN_ERC721_TOKEN =

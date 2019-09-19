@@ -8,8 +8,8 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
 
-object SyncerApiFactory {
-    private const val BASE = NetworkConfig.SYNCER_URL
+class SyncerApiFactory(networkConfig: NetworkConfig) {
+    private val BASE = networkConfig.SYNCER_URL
 
     private var retrofit: Retrofit? = null
 

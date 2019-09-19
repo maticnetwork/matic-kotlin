@@ -3,12 +3,13 @@ package network.matic.maticsdkkotlin
 import io.reactivex.schedulers.Schedulers
 import network.matic.matick.NetworkConfig
 import network.matic.matick.MaticK
+import network.matic.matick.crypto.Credentials
 import java.math.BigInteger
 
 object TestMaticK {
     fun initWeb3() {
 
-        val matick = MaticK(TestNet1())
+        val matick = MaticK(TestNet1(), Credentials.create(ConfigTest.PRIVATE_KEY))
 //        matick.getGasPrice()
 //            .subscribeOn(Schedulers.io())
 //            .observeOn(AndroidSchedulers.mainThread())
@@ -29,15 +30,16 @@ object TestMaticK {
 //               it.printStackTrace()
 //           })
 
-//        matick.getERC20Balance("0xc82c13004c06E4c627cF2518612A55CE7a3Db699","0x9fB29AAc15b9A4B7F17c3385939b007540f4d791", false)
+//        matick.getERC20Balance(ConfigTest.ROPSTEN_TEST_TOKEN,ConfigTest.FROM_ADDRESS, true)
 //            .subscribeOn(Schedulers.io())
 //            .subscribe({
 //            println("Balance ${it}")
 //        },{
+//                println("errorrr")
 //            it.printStackTrace()
 //        })
 
-        matick.transferTokens(ConfigTest.FROM_ADDRESS, ConfigTest.MATIC_TEST_TOKEN, BigInteger.valueOf(100000000000000000), false)
+        matick.transferTokens(ConfigTest.FROM_ADDRESS, ConfigTest.ROPSTEN_TEST_TOKEN, BigInteger.valueOf(100000000000000000), true)
             .subscribeOn(Schedulers.io())
             .subscribe({
                 println("hello it ${it.transactionHash}")
@@ -93,7 +95,7 @@ object TestMaticK {
 //        matick.getTx("0xc79e89838582267224b4bb6491661b12dffdd0cf0fdc65c71bfb104dac532d56")
 //        matick.getTxProof("0xc79e89838582267224b4bb6491661b12dffdd0cf0fdc65c71bfb104dac532d56")
 //        matick.getReceiptProof("0xc79e89838582267224b4bb6491661b12dffdd0cf0fdc65c71bfb104dac532d56")
-        matick.withdraw(
+        /*matick.withdraw(
             ConfigTest.WITHDRAW_MANAGER_ADDRESS,
             "0xb92432e34a637582f196b7cd46978301d888aa4b8ed43c2772fb73a1a2a4b403"
 //            "0x3a50a99a47d408887517d1dc086fdee631e134447e584394e1eeb6ff5a8fef69"
@@ -102,7 +104,7 @@ object TestMaticK {
                 println("hello it ${it.transactionHash}")
             }, {
                 it.printStackTrace()
-            })
+            })*/
     }
 
 }
