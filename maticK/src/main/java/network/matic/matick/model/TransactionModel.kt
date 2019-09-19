@@ -1,9 +1,6 @@
 package network.matic.matick.model
 
-import com.google.gson.*
 import com.google.gson.annotations.SerializedName
-import java.lang.reflect.Type
-
 
 data class TransactionModel(
     @SerializedName("txId") val id: String,
