@@ -387,7 +387,7 @@ public abstract class Contract extends ManagedTransaction {
      */
     RawTransaction createRawTransaction(String data, String funcName) throws IOException {
         BigInteger nonce = web3j.ethGetTransactionCount(transactionManager.getFromAddress(),
-                DefaultBlockParameterName.LATEST)
+                DefaultBlockParameterName.PENDING)
                 .send().getTransactionCount();
         BigInteger gasLimit = web3j.ethEstimateGas(Transaction.createEthCallTransaction(
                 transactionManager.getFromAddress(),
@@ -395,7 +395,8 @@ public abstract class Contract extends ManagedTransaction {
                 data
             )
         ).send().getAmountUsed();
-        return RawTransaction.createTransaction(nonce, gasProvider.getGasPrice(funcName),
+        BigInteger gasPrice = web3j.ethGasPrice().send().getGasPrice();
+        return RawTransaction.createTransaction(nonce, gasPrice,
                 gasLimit, contractAddress, data);
 
     }

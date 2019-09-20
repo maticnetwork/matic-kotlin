@@ -9,16 +9,16 @@ import network.matic.matick.api.WatcherApiFactory
 import network.matic.matick.artifacts.*
 import network.matic.matick.core.protocol.Web3j
 import network.matic.matick.core.protocol.core.DefaultBlockParameterName
-import network.matic.matick.core.protocol.core.methods.request.Transaction
-import network.matic.matick.core.protocol.core.methods.response.EthEstimateGas
-import network.matic.matick.core.protocol.core.methods.response.EthGasPrice
 import network.matic.matick.core.protocol.core.methods.response.EthSendTransaction
 import network.matic.matick.core.protocol.http.HttpService
 import network.matic.matick.core.tx.gas.ContractGasProvider
 import network.matic.matick.crypto.Credentials
 import network.matic.matick.crypto.RawTransaction
 import network.matic.matick.crypto.TransactionEncoder
-import network.matic.matick.model.*
+import network.matic.matick.model.Header
+import network.matic.matick.model.TransactionModel
+import network.matic.matick.model.TxProofModel
+import network.matic.matick.model.WatcherModel
 import network.matic.matick.rlp.RlpDecoder
 import network.matic.matick.rlp.RlpEncoder
 import network.matic.matick.rlp.RlpString
@@ -26,13 +26,11 @@ import network.matic.matick.rlp.RlpType
 import network.matic.matick.utils.utils.Numeric
 import java.math.BigInteger
 
-class MaticK(private val networkConfig: NetworkConfig) {
+class MaticK(networkConfig: NetworkConfig) {
   private lateinit var credentials: Credentials
-  private lateinit var fromAddress : String
+  private lateinit var fromAddress: String
   private var web3j: Web3j = Web3j.build(HttpService(networkConfig.MATIC_PROVIDER))
   private var web3jParent: Web3j = Web3j.build(HttpService(networkConfig.PARENT_PROVIDER))
-  private var syncerUrl: String = networkConfig.SYNCER_URL
-  private var watcherUrl: String = networkConfig.WATCHER_URL
   private var rootChainAddress: String = networkConfig.ROOT_CONTRACT_ADDRESS
   private var rootWethAddress: String = networkConfig.ROOT_WETH_ADDRESS
   private var childWethAddress: String = networkConfig.MATIC_WETH_ADDRESS
@@ -76,7 +74,7 @@ class MaticK(private val networkConfig: NetworkConfig) {
 
   fun loadStandardTokenContract(
     contractAddress: String,
-    parent: Boolean = true
+    parent: Boolean = false
   ): Flowable<StandardToken> {
 
     return Flowable.just(
@@ -119,7 +117,7 @@ class MaticK(private val networkConfig: NetworkConfig) {
   fun getGasPrice() = web3jParent.ethGasPrice().flowable()
 
   fun getNonce() = web3j.ethGetTransactionCount(
-    fromAddress, DefaultBlockParameterName.LATEST
+    fromAddress, DefaultBlockParameterName.PENDING
   )
 
   fun getERC20Balance(
@@ -162,16 +160,12 @@ class MaticK(private val networkConfig: NetworkConfig) {
     contractAddress: String,
     amount: BigInteger
   ): Flowable<EthSendTransaction> {
-    return loadStandardTokenContract(contractAddress)
+    return loadStandardTokenContract(contractAddress, true)
       .flatMapSingle {
         it.approve(rootChainAddress, amount)
       }
       .flatMap {
-        val signedTransaction = TransactionEncoder.signMessage(
-          it, credentials
-        )
-        val hexValue = Numeric.toHexString(signedTransaction)
-        web3jParent.ethSendRawTransaction(hexValue).flowable()
+        signAndSendRawTransaction(it, web3jParent)
       }
   }
 
@@ -183,20 +177,15 @@ class MaticK(private val networkConfig: NetworkConfig) {
       .flatMapSingle {
         it.deposit(contractAddress, fromAddress, amount)
       }.flatMap {
-        val signedTransaction = TransactionEncoder.signMessage(
-          it, credentials
-        )
-        val hexValue = Numeric.toHexString(signedTransaction)
-        web3jParent.ethSendRawTransaction(hexValue).flowable()
+        signAndSendRawTransaction(it, web3jParent)
       }
   }
 
   fun safeDepositERC721Tokens(
     contractAddress: String,
-    amount: BigInteger,
-    parent: Boolean = true
+    amount: BigInteger
   ): Flowable<EthSendTransaction> {
-    return loadERC721Contract(contractAddress, parent)
+    return loadERC721Contract(contractAddress, true)
       .flatMapSingle {
         it.safeTransferFrom(
           fromAddress,
@@ -204,28 +193,19 @@ class MaticK(private val networkConfig: NetworkConfig) {
           amount
         )
       }.flatMap {
-        val signedTransaction = TransactionEncoder.signMessage(
-          it, credentials
-        )
-        val hexValue = Numeric.toHexString(signedTransaction)
-        web3jParent.ethSendRawTransaction(hexValue).flowable()
+        signAndSendRawTransaction(it, web3jParent)
       }
   }
 
   fun approveERC721TokenForDeposit(
     contractAddress: String,
-    amount: BigInteger,
-    parent: Boolean = true
+    amount: BigInteger
   ): Flowable<EthSendTransaction> {
-    return loadERC721Contract(contractAddress, parent)
+    return loadERC721Contract(contractAddress, true)
       .flatMapSingle {
         it.approve(rootChainAddress, amount)
       }.flatMap {
-        val signedTransaction = TransactionEncoder.signMessage(
-          it, credentials
-        )
-        val hexValue = Numeric.toHexString(signedTransaction)
-        web3jParent.ethSendRawTransaction(hexValue).flowable()
+        signAndSendRawTransaction(it, web3jParent)
       }
   }
 
@@ -237,11 +217,7 @@ class MaticK(private val networkConfig: NetworkConfig) {
       .flatMapSingle {
         it.depositERC721(contractAddress, fromAddress, amount)
       }.flatMap {
-        val signedTransaction = TransactionEncoder.signMessage(
-          it, credentials
-        )
-        val hexValue = Numeric.toHexString(signedTransaction)
-        web3jParent.ethSendRawTransaction(hexValue).flowable()
+        signAndSendRawTransaction(it, web3jParent)
       }
   }
 
@@ -256,13 +232,7 @@ class MaticK(private val networkConfig: NetworkConfig) {
         .flatMapSingle {
           it.transfer(recipientAddress, amount)
         }.flatMap {
-          val signedTransaction = TransactionEncoder.signMessage(
-            it, credentials
-          )
-          println(signedTransaction.size)
-          val hexValue = Numeric.toHexString(signedTransaction)
-          println(hexValue)
-          ethSendRawTransaction(hexValue).flowable()
+          signAndSendRawTransaction(it, this)
         }
     }
   }
@@ -277,11 +247,7 @@ class MaticK(private val networkConfig: NetworkConfig) {
       return loadERC721Contract(contractAddress, parent).flatMapSingle {
         it.transferFrom(fromAddress, recipientAddress, amount)
       }.flatMap {
-        val signedTransaction = TransactionEncoder.signMessage(
-          it, credentials
-        )
-        val hexValue = Numeric.toHexString(signedTransaction)
-        ethSendRawTransaction(hexValue).flowable()
+        signAndSendRawTransaction(it, this)
       }
     }
   }
@@ -294,36 +260,26 @@ class MaticK(private val networkConfig: NetworkConfig) {
 
   fun startWithdraw(
     contractAddress: String,
-    amount: BigInteger,
-    parent: Boolean = false
+    amount: BigInteger
   ): Flowable<EthSendTransaction> {
-    return loadERC20Contract(contractAddress, parent)
+    return loadERC20Contract(contractAddress, false)
       .flatMapSingle {
         it.withdraw(amount)
       }
       .flatMap {
-        val signedTransaction = TransactionEncoder.signMessage(
-          it, credentials
-        )
-        val hexValue = Numeric.toHexString(signedTransaction)
-        web3j.ethSendRawTransaction(hexValue).flowable()
+        signAndSendRawTransaction(it, web3j)
       }
   }
 
   fun startERC721Withdraw(
     contractAddress: String,
-    amount: BigInteger,
-    parent: Boolean = false
+    amount: BigInteger
   ): Flowable<EthSendTransaction> {
-    return loadERC721Contract(contractAddress, parent)
+    return loadERC721Contract(contractAddress)
       .flatMapSingle {
         it.withdraw(amount)
       }.flatMap {
-        val signedTransaction = TransactionEncoder.signMessage(
-          it, credentials
-        )
-        val hexValue = Numeric.toHexString(signedTransaction)
-        web3j.ethSendRawTransaction(hexValue).flowable()
+        signAndSendRawTransaction(it, web3j)
       }
   }
 
@@ -377,11 +333,12 @@ class MaticK(private val networkConfig: NetworkConfig) {
   ): Flowable<EthSendTransaction> {
     return getTxProof(txHash)
       .zipWith(getReceiptProof(txHash),
-        BiFunction { txProof: TxProofModel, recieptProof: TxProofModel ->
-          Proof(txProof, recieptProof)
+        BiFunction { txProof: TxProofModel, receiptProof: TxProofModel ->
+          Proof(txProof, receiptProof)
         }).flatMapPublisher {
         val header = getHeaderObject(it.txProofModel.proof.blockNumber)
         val headerNumber = header.blockingGet().number
+
         val headerProof = getHeaderProof(
           it.txProofModel.proof.blockNumber,
           header.blockingGet().start,
@@ -390,31 +347,32 @@ class MaticK(private val networkConfig: NetworkConfig) {
 
         val trimmedProof =
           headerProof.blockingGet().proof.proof.joinToString("").replace("0x", "")
-        val sPath = it.recieptProofModel.proof.path
+
+        val sPath = it.receiptProofModel.proof.path
         val t = Numeric.hexStringToByteArray(sPath)
         val values = ArrayList<RlpType>()
+
         values.add(RlpString.create(sPath))
 
         // TODO: Offset is hardcoded here, not good approach need to think on this
-//        val rlpList = RlpList(values)
-//        val encoderRlp = RlpEncoder.encode(rlpList)
+        // val rlpList = RlpList(values)
+        // val encoderRlp = RlpEncoder.encode(rlpList)
 
         val encoderRlp = RlpEncoder.encode(t, RlpDecoder.OFFSET_SHORT_STRING)
 
         val hexValue = Numeric.toHexString(encoderRlp)
+
         withdrawBurntTokens(
           headerNumber,
           it.txProofModel,
-          it.recieptProofModel,
+          it.receiptProofModel,
           trimmedProof,
           hexValue
         )
       }.flatMap {
-        val signedTransaction = TransactionEncoder.signMessage(
-          it, credentials
-        )
-        val hexValue = Numeric.toHexString(signedTransaction)
-        web3jParent.ethSendRawTransaction(hexValue).flowable()
+        signAndSendRawTransaction(it, web3jParent)
+      }.onErrorReturn {
+        throw Exception("No corresponding checkpoint/header block found for $txHash")
       }
   }
 
@@ -426,39 +384,44 @@ class MaticK(private val networkConfig: NetworkConfig) {
     trimmedProof: String,
     hexValue: String
   ): Flowable<RawTransaction> {
-    return loadWithdrawMangerContract().flatMapSingle {
-      it.withdrawBurntTokens(
-        BigInteger.valueOf(headerNumber.toLong()),
-        Numeric.hexStringToByteArray(trimmedProof),
-        BigInteger.valueOf(txProof.proof.blockNumber.toLong()),
-        BigInteger.valueOf(txProof.proof.blockTimestamp.toLong()),
-        Numeric.hexStringToByteArray(txProof.proof.root),
-        Numeric.hexStringToByteArray(receiptProof.proof.root),
-        Numeric.hexStringToByteArray(hexValue),
-        Numeric.hexStringToByteArray(txProof.proof.value),
-        Numeric.hexStringToByteArray(txProof.proof.parentNodes),
-        Numeric.hexStringToByteArray(receiptProof.proof.value),
-        Numeric.hexStringToByteArray(receiptProof.proof.parentNodes)
-      )
-    }
+    return loadWithdrawMangerContract()
+      .flatMapSingle {
+        it.withdrawBurntTokens(
+          BigInteger.valueOf(headerNumber.toLong()),
+          Numeric.hexStringToByteArray(trimmedProof),
+          BigInteger.valueOf(txProof.proof.blockNumber.toLong()),
+          BigInteger.valueOf(txProof.proof.blockTimestamp.toLong()),
+          Numeric.hexStringToByteArray(txProof.proof.root),
+          Numeric.hexStringToByteArray(receiptProof.proof.root),
+          Numeric.hexStringToByteArray(hexValue),
+          Numeric.hexStringToByteArray(txProof.proof.value),
+          Numeric.hexStringToByteArray(txProof.proof.parentNodes),
+          Numeric.hexStringToByteArray(receiptProof.proof.value),
+          Numeric.hexStringToByteArray(receiptProof.proof.parentNodes)
+        )
+      }
   }
+
   fun processExits(rootTokenAddress: String)
       : Flowable<EthSendTransaction> {
     return loadWithdrawMangerContract()
       .flatMapSingle {
         it.processExits(rootTokenAddress)
       }.flatMap {
-        val signedTransaction = TransactionEncoder.signMessage(
-          it, credentials
-        )
-        val hexValue = Numeric.toHexString(signedTransaction)
-        web3j.ethSendRawTransaction(hexValue).flowable()
+        signAndSendRawTransaction(it, web3jParent)
       }
   }
 
   fun setWallet(privateKey: String) {
     credentials = Credentials.create(privateKey)
     fromAddress = credentials.address
+  }
+
+  fun signAndSendRawTransaction(rawTransaction: RawTransaction, web3j: Web3j)
+      : Flowable<EthSendTransaction> {
+    val signedTransaction = TransactionEncoder.signMessage(rawTransaction, credentials)
+    val hexValue = Numeric.toHexString(signedTransaction)
+    return web3j.ethSendRawTransaction(hexValue).flowable()
   }
 }
 
@@ -486,15 +449,5 @@ internal class CustomContractGasProvider(
 
 internal class Proof(
   val txProofModel: TxProofModel,
-  val recieptProofModel: TxProofModel,
-  var headerModel: WatcherModel? = null,
-  var headerProofModel: HeaderProof? = null
-) {
-  fun setBlockHeader(header: WatcherModel) {
-    headerModel = header
-  }
-
-  fun setHeaderProof(headerProof: HeaderProof) {
-    headerProofModel = headerProof
-  }
-}
+  val receiptProofModel: TxProofModel
+)
