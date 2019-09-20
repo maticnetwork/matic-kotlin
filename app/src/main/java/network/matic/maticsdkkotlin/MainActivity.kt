@@ -9,9 +9,10 @@ class MainActivity : AppCompatActivity() {
     super.onCreate(savedInstanceState)
 
     BalanceOfERC20.testBalanceOfERC20()
-    TransferERC20.testTransferERC20()
-    DepositERC20.testDepositERC20()
-    WithdrawERC20.testWithdrawERC20()
-    WithdrawComplete.testWithdrawComplete()
+//    TransferERC20.testTransferERC20()
+//    DepositERC20.testApproveERC20()
+//    DepositERC20.testDepositERC20()
+//    WithdrawERC20.testWithdrawERC20()
+//    WithdrawComplete.testWithdrawComplete()
   }
 }
