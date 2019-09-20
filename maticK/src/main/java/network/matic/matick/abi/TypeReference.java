@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 import network.matic.matick.abi.datatypes.DynamicArray;
 import network.matic.matick.abi.datatypes.StaticArray;
 import network.matic.matick.abi.datatypes.generated.AbiTypes;
+import network.matic.matick.compat.Compat;
 
 
 /**
@@ -222,8 +223,8 @@ public abstract class TypeReference<T extends network.matic.matick.abi.datatypes
     }
 
     /**
-     * Workaround to ensure type does not come back as T due to erasure, this enables you to create
-     * a TypeReference via {@link Class Class&lt;T&gt;}.
+     * Workaround to ensure type does not come back as T due to erasure, this enables you to
+     * create a TypeReference via {@link Class Class&lt;T&gt;}.
      *
      * @return the parameterized Class type if applicable, otherwise a regular class
      * @throws ClassNotFoundException if the class type cannot be determined
@@ -232,10 +233,10 @@ public abstract class TypeReference<T extends network.matic.matick.abi.datatypes
     public Class<T> getClassType() throws ClassNotFoundException {
         Type clsType = getType();
 
-        if (getType() instanceof ParameterizedType) {
+        if (clsType instanceof ParameterizedType) {
             return (Class<T>) ((ParameterizedType) clsType).getRawType();
         } else {
-            return (Class<T>) Class.forName(clsType.getTypeName());
+            return (Class<T>) Class.forName(Compat.getTypeName(clsType));
         }
     }
 
