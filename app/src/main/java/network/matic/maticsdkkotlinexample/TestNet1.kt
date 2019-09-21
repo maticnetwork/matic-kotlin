@@ -1,6 +1,6 @@
 package network.matic.maticsdkkotlinexample
 
-import network.matic.matick.NetworkConfig
+import network.matic.sdk.NetworkConfig
 
 data class TestNet1(
     override var MATIC_PROVIDER: String = ConfigTest.MATIC_PROVIDER,

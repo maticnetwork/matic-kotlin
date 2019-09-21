@@ -1,7 +1,7 @@
 package network.matic.maticsdkkotlinexample
 
 import io.reactivex.schedulers.Schedulers
-import network.matic.matick.MaticK
+import network.matic.sdk.MaticK
 import java.math.BigInteger
 
 object WithdrawERC20 {

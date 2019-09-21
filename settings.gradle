@@ -1,2 +1,1 @@
-include ':app', ':maticK',
-        rootProject.name = 'Matic SDK Kotlin'
+include ':app', ':matic'
