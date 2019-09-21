@@ -20,10 +20,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import io.reactivex.Single;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import network.matic.matick.abi.EventEncoder;
 import network.matic.matick.abi.EventValues;
 import network.matic.matick.abi.FunctionEncoder;
@@ -38,8 +38,8 @@ import network.matic.matick.core.protocol.Web3j;
 import network.matic.matick.core.protocol.core.DefaultBlockParameter;
 import network.matic.matick.core.protocol.core.DefaultBlockParameterName;
 import network.matic.matick.core.protocol.core.RemoteCall;
-import network.matic.matick.core.protocol.core.methods.request.Transaction;
 import network.matic.matick.core.protocol.core.RemoteFunctionCall;
+import network.matic.matick.core.protocol.core.methods.request.Transaction;
 import network.matic.matick.core.protocol.core.methods.response.EthGetCode;
 import network.matic.matick.core.protocol.core.methods.response.Log;
 import network.matic.matick.core.protocol.core.methods.response.TransactionReceipt;
@@ -393,7 +393,7 @@ public abstract class Contract extends ManagedTransaction {
                 transactionManager.getFromAddress(),
                 contractAddress,
                 data
-            )
+                )
         ).send().getAmountUsed();
         BigInteger gasPrice = web3j.ethGasPrice().send().getGasPrice();
         return RawTransaction.createTransaction(nonce, gasPrice,
@@ -670,16 +670,15 @@ public abstract class Contract extends ManagedTransaction {
             String encodedConstructor,
             BigInteger value) {
         return new RemoteCall<>(
-                () ->
-                        deploy(
-                                type,
-                                web3j,
-                                transactionManager,
-                                gasPrice,
-                                gasLimit,
-                                binary,
-                                encodedConstructor,
-                                value));
+                () -> deploy(
+                        type,
+                        web3j,
+                        transactionManager,
+                        gasPrice,
+                        gasLimit,
+                        binary,
+                        encodedConstructor,
+                        value));
     }
 
     public static <T extends Contract> RemoteCall<T> deployRemoteCall(
