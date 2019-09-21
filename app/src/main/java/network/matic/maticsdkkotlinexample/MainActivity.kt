@@ -1,4 +1,4 @@
-package network.matic.maticsdkkotlin
+package network.matic.maticsdkkotlinexample
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

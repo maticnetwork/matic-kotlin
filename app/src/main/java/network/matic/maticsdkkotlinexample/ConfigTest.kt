@@ -1,4 +1,4 @@
-package network.matic.maticsdkkotlin
+package network.matic.maticsdkkotlinexample
 
 object ConfigTest {
   const val MATIC_PROVIDER = "https://testnet2.matic.network" // This is the MATIC testnet RPC

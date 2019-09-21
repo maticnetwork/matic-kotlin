@@ -1,4 +1,4 @@
-package network.matic.maticsdkkotlin
+package network.matic.maticsdkkotlinexample
 
 import network.matic.matick.NetworkConfig
 

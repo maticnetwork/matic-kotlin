@@ -1,6 +1,5 @@
-package network.matic.maticsdkkotlin
+package network.matic.maticsdkkotlinexample
 
-import android.annotation.SuppressLint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import network.matic.matick.MaticK

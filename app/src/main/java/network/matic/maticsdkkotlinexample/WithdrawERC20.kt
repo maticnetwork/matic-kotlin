@@ -1,21 +1,22 @@
-package network.matic.maticsdkkotlin
+package network.matic.maticsdkkotlinexample
 
 import io.reactivex.schedulers.Schedulers
 import network.matic.matick.MaticK
+import java.math.BigInteger
 
-object WithdrawComplete {
-  fun testWithdrawComplete() {
+object WithdrawERC20 {
+  fun testWithdrawERC20() {
     val matick = MaticK(TestNet1())
-    val transactionHash = "0x733fb1835cf781f16b9914baa95449dac0394278670874abde8951a443d4ba41"
     matick.setWallet(ConfigTest.PRIVATE_KEY)
-
-    matick.withdraw(transactionHash)
+    matick.startWithdraw(
+      ConfigTest.MATIC_TEST_TOKEN,
+      BigInteger("100000000000000000")
+    )
       .subscribeOn(Schedulers.io())
       .subscribe({
         println("Transaction Hash:  ${it.transactionHash}")
       }, {
         it.printStackTrace()
-        println(it.message)
       })
   }
 

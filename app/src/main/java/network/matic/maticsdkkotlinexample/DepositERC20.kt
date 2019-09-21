@@ -1,4 +1,4 @@
-package network.matic.maticsdkkotlin
+package network.matic.maticsdkkotlinexample
 
 import io.reactivex.schedulers.Schedulers
 import network.matic.matick.MaticK
