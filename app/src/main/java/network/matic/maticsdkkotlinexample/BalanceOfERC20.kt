@@ -2,15 +2,15 @@ package network.matic.maticsdkkotlinexample
 
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import network.matic.sdk.MaticK
+import network.matic.sdk.Matic
 
 object BalanceOfERC20 {
   fun testBalanceOfERC20() {
     val userAddress = "0x7eD7f36694153bA6EfF6ca6726b60F6E2Bb17fcf"
-    val matick = MaticK(TestNet1())
-    matick.setWallet(ConfigTest.PRIVATE_KEY)
+    val maticInstance = Matic(TestNet1())
+    maticInstance.setWallet(ConfigTest.PRIVATE_KEY)
 
-    matick.getERC20Balance(ConfigTest.MATIC_TEST_TOKEN, userAddress, false)
+    maticInstance.getERC20Balance(ConfigTest.MATIC_TEST_TOKEN, userAddress, false)
       .subscribeOn(Schedulers.io())
       .observeOn(AndroidSchedulers.mainThread())
       .subscribe({

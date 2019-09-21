@@ -26,7 +26,7 @@ import network.matic.sdk.rlp.RlpType
 import network.matic.sdk.utils.utils.Numeric
 import java.math.BigInteger
 
-class MaticK(networkConfig: NetworkConfig) {
+class Matic(networkConfig: NetworkConfig) {
   private lateinit var credentials: Credentials
   private lateinit var fromAddress: String
   private var web3j: Web3j = Web3j.build(HttpService(networkConfig.MATIC_PROVIDER))

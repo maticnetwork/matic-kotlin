@@ -17,6 +17,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("network.matic.matick.test", appContext.packageName)
+        assertEquals("network.matic.sdk.test", appContext.packageName)
     }
 }

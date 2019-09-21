@@ -2,7 +2,7 @@
 [![](https://jitpack.io/v/maticnetwork/matic-kotlin.svg)](https://jitpack.io/#maticnetwork/matic-kotlin)
 
 
-This repository contains the `matick` client library. `maticK` makes it easy for developers, who may not be deeply familiar with smart contract development, to interact with the various components of Matic Network.
+This repository contains the `matic` client library. `matic` makes it easy for developers, who may not be deeply familiar with smart contract development, to interact with the various components of Matic Network.
 
 This library will help developers to move assets from Ethereum chain to Matic chain, and withdraw from Matic to Ethereum using fraud proofs.
 
