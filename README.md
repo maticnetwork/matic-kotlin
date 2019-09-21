@@ -1,4 +1,6 @@
 # Matic Kotlin SDK
+[![](https://jitpack.io/v/maticnetwork/matic-kotlin.svg)](https://jitpack.io/#maticnetwork/matic-kotlin)
+
 
 This repository contains the `matick` client library. `maticK` makes it easy for developers, who may not be deeply familiar with smart contract development, to interact with the various components of Matic Network.
 
