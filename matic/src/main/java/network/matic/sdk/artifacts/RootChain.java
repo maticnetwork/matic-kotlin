@@ -626,12 +626,12 @@ public class RootChain extends Contract {
         return createRawTransaction(function);
     }
 
-    public RemoteCall<TransactionReceipt> depositEthers(BigInteger weiValue) {
+    public Single<RawTransaction> depositEthers(BigInteger weiValue) {
         final Function function = new Function(
                 FUNC_DEPOSITETHERS,
                 Arrays.<Type>asList(),
                 Collections.<TypeReference<?>>emptyList());
-        return executeRemoteCallTransaction(function, weiValue);
+        return createRawTransaction(function, weiValue);
     }
 
     public Single<RawTransaction> depositERC721(String _token, String _user, BigInteger _tokenId) {

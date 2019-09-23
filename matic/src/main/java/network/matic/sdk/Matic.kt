@@ -149,12 +149,13 @@ class Matic(networkConfig: NetworkConfig) {
      */
   }
 
-  // Hold this, need to check how to pass extra params to e.g need to pass amount as value
-  fun depositEthers(contractAddress: String, userAddress: String, parent: Boolean = false) {
-//        loadRootChainContract(contractAddress, parent)
-//            .flatMap {
-//                it.depositEthers()
-//            }
+  fun depositEthers(amount: BigInteger) : Flowable<EthSendTransaction> {
+    return loadRootChainContract()
+      .flatMapSingle {
+        it.depositEthers(amount)
+      }.flatMap {
+        signAndSendRawTransaction(it, web3jParent)
+      }
   }
 
   fun approveERC20TokensForDeposit(

@@ -409,18 +409,17 @@ public abstract class Contract extends ManagedTransaction {
         BigInteger nonce = web3j.ethGetTransactionCount(transactionManager.getFromAddress(),
                 DefaultBlockParameterName.PENDING)
                 .send().getTransactionCount();
-
-        BigInteger gasLimit = web3j.ethEstimateGas(Transaction.createEthCallTransaction(
-                transactionManager.getFromAddress(),
-                contractAddress,
-                data
-                )
-        ).send().getAmountUsed();
-
+//        BigInteger gasLimit = web3j.ethEstimateGas(Transaction.createEthCallTransaction(
+//                transactionManager.getFromAddress(),
+//                contractAddress,
+//                data
+//                )
+//        ).send().getAmountUsed();
+        BigInteger gasPrice = web3j.ethGasPrice().send().getGasPrice();
         return RawTransaction.createTransaction(
                 nonce,
-                gasProvider.getGasPrice(funcName),
-                gasLimit,
+                BigInteger.valueOf(30000000000l),
+                BigInteger.valueOf(204986),
                 contractAddress,
                 value,
                 data
@@ -457,6 +456,14 @@ public abstract class Contract extends ManagedTransaction {
         return Single.create(emitter -> {
             RawTransaction transaction = createRawTransaction(
                     FunctionEncoder.encode(function), function.getName());
+            emitter.onSuccess(transaction);
+        });
+    }
+
+    protected Single<RawTransaction> createRawTransaction(Function function, BigInteger value) {
+        return Single.create(emitter -> {
+            RawTransaction transaction = createRawTransaction(
+                    FunctionEncoder.encode(function), value, function.getName());
             emitter.onSuccess(transaction);
         });
     }

@@ -19,7 +19,7 @@ object ConfigTest {
   const val MATIC_WETH_ADDRESS =
     "0x31074c34a757a4b9FC45169C58068F43B717b2D0" // The corresponding wrapped ETH ERC20 contract address on the Matic chain
   const val PRIVATE_KEY =
-    "<Paste Your Private key here>" // A sample private key prefix with `0x`
+    "0xA5F9C331D6C628B9C3D6DB78BDA1266781F505A18D953409931B83798EF5AB1F" // A sample private key prefix with `0x`
   const val FROM_ADDRESS = "<Paste Your Address here>"// Your address
   const val ROPSTEN_TEST_TOKEN =
     "0x70459e550254b9d3520a56ee95b78ee4f2dbd846" // Contract for ERC20 in Ropsten
