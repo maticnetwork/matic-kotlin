@@ -9,6 +9,7 @@ import network.matic.sdk.api.WatcherApiFactory
 import network.matic.sdk.artifacts.*
 import network.matic.sdk.core.protocol.Web3j
 import network.matic.sdk.core.protocol.core.DefaultBlockParameterName
+import network.matic.sdk.core.protocol.core.methods.response.EthGetBalance
 import network.matic.sdk.core.protocol.core.methods.response.EthSendTransaction
 import network.matic.sdk.core.protocol.http.HttpService
 import network.matic.sdk.core.tx.gas.ContractGasProvider
@@ -112,7 +113,7 @@ class Matic(networkConfig: NetworkConfig) {
   fun getEtherBalance() = web3jParent.ethGetBalance(
     fromAddress,
     DefaultBlockParameterName.LATEST
-  )
+  ).flowable()
 
   fun getGasPrice() = web3jParent.ethGasPrice().flowable()
 
