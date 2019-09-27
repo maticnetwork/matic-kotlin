@@ -14,9 +14,7 @@ import network.matic.sdk.core.protocol.http.HttpService
 import network.matic.sdk.core.tx.RawTransactionManager
 import network.matic.sdk.core.tx.TransactionManager
 import network.matic.sdk.core.tx.gas.ContractGasProvider
-import network.matic.sdk.crypto.Credentials
-import network.matic.sdk.crypto.RawTransaction
-import network.matic.sdk.crypto.TransactionEncoder
+import network.matic.sdk.crypto.*
 import network.matic.sdk.model.Header
 import network.matic.sdk.model.TransactionModel
 import network.matic.sdk.model.TxProofModel
@@ -27,6 +25,7 @@ import network.matic.sdk.rlp.RlpString
 import network.matic.sdk.rlp.RlpType
 import network.matic.sdk.utils.utils.Numeric
 import java.math.BigInteger
+import java.nio.ByteBuffer
 
 class Matic(networkConfig: NetworkConfig) {
   private lateinit var credentials: Credentials
@@ -498,6 +497,23 @@ class Matic(networkConfig: NetworkConfig) {
     val signedTransaction = TransactionEncoder.signMessage(rawTransaction, credentials)
     val hexValue = Numeric.toHexString(signedTransaction)
     return web3j.ethSendRawTransaction(hexValue).flowable()
+  }
+
+  fun signTypedData(msgParams: String): String {
+    val dataEncoder = StructuredDataEncoder(msgParams)
+
+    val sig = Sign.signMessage(dataEncoder.hashStructuredData(), credentials.ecKeyPair, false)
+    return toRpcSig(sig)
+  }
+
+  private fun toRpcSig(signature: Sign.SignatureData): String {
+    // sign
+    val sigBuffer = ByteBuffer.allocate(signature.r.size + signature.s.size + 1)
+    sigBuffer.put(signature.r)
+    sigBuffer.put(signature.s)
+    sigBuffer.put(signature.v)
+
+    return Numeric.toHexString(sigBuffer.array())
   }
 }
 

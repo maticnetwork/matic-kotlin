@@ -7,8 +7,9 @@ class MainActivity : AppCompatActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-
-    BalanceOfERC20.testBalanceOfERC20()
+      
+    SignTypedData.testSignTypedData()
+//    BalanceOfERC20.testBalanceOfERC20()
 //    DepositEther.testDepositEther()
 //    TransferERC20.testTransferERC20()
 //    DepositERC20.testApproveERC20()
