@@ -41,7 +41,7 @@ import network.matic.sdk.utils.utils.Numeric;
 public class RawTransactionManager extends TransactionManager {
 
     private final Web3j web3j;
-    final Credentials credentials;
+    private Credentials credentials;
 
     private final long chainId;
 
@@ -81,6 +81,13 @@ public class RawTransactionManager extends TransactionManager {
 
     public RawTransactionManager(Web3j web3j, Credentials credentials) {
         this(web3j, credentials, ChainId.NONE);
+    }
+
+    public RawTransactionManager(Web3j web3j, String fromAddress) {
+        super(web3j, fromAddress);
+
+        this.web3j = web3j;
+        this.chainId =  ChainId.NONE;
     }
 
     public RawTransactionManager(

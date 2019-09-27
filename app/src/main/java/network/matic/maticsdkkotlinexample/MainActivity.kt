@@ -9,7 +9,7 @@ class MainActivity : AppCompatActivity() {
     super.onCreate(savedInstanceState)
 
     BalanceOfERC20.testBalanceOfERC20()
-    DepositEther.testDepositEther()
+//    DepositEther.testDepositEther()
 //    TransferERC20.testTransferERC20()
 //    DepositERC20.testApproveERC20()
 //    DepositERC20.testDepositERC20()

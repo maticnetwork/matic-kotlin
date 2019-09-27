@@ -9,9 +9,10 @@ import network.matic.sdk.api.WatcherApiFactory
 import network.matic.sdk.artifacts.*
 import network.matic.sdk.core.protocol.Web3j
 import network.matic.sdk.core.protocol.core.DefaultBlockParameterName
-import network.matic.sdk.core.protocol.core.methods.response.EthGetBalance
 import network.matic.sdk.core.protocol.core.methods.response.EthSendTransaction
 import network.matic.sdk.core.protocol.http.HttpService
+import network.matic.sdk.core.tx.RawTransactionManager
+import network.matic.sdk.core.tx.TransactionManager
 import network.matic.sdk.core.tx.gas.ContractGasProvider
 import network.matic.sdk.crypto.Credentials
 import network.matic.sdk.crypto.RawTransaction
@@ -29,7 +30,9 @@ import java.math.BigInteger
 
 class Matic(networkConfig: NetworkConfig) {
   private lateinit var credentials: Credentials
+  private var isCredentials: Boolean = false
   private lateinit var fromAddress: String
+  private lateinit var transactionManager: TransactionManager
   private var web3j: Web3j = Web3j.build(HttpService(networkConfig.MATIC_PROVIDER))
   private var web3jParent: Web3j = Web3j.build(HttpService(networkConfig.PARENT_PROVIDER))
   private var rootChainAddress: String = networkConfig.ROOT_CONTRACT_ADDRESS
@@ -41,73 +44,138 @@ class Matic(networkConfig: NetworkConfig) {
   private var watcherApiFactory = WatcherApiFactory(networkConfig)
 
   fun loadERC20Contract(contractAddress: String, parent: Boolean = false): Flowable<ChildERC20> {
-    return Flowable.just(
-      ChildERC20.load(
-        contractAddress,
-        if (parent) web3jParent else web3j,
-        credentials,
-        CustomContractGasProvider()
+    if (isCredentials) {
+      return Flowable.just(
+        ChildERC20.load(
+          contractAddress,
+          if (parent) web3jParent else web3j,
+          credentials,
+          CustomContractGasProvider()
+        )
       )
-    )
+    } else {
+      return Flowable.just(
+        ChildERC20.load(
+          contractAddress,
+          if (parent) web3jParent else web3j,
+          transactionManager,
+          CustomContractGasProvider()
+        )
+      )
+    }
   }
 
   fun loadERC721Contract(contractAddress: String, parent: Boolean = false): Flowable<ChildERC721> {
-    return Flowable.just(
-      ChildERC721.load(
-        contractAddress,
-        if (parent) web3jParent else web3j,
-        credentials,
-        CustomContractGasProvider()
+    if (isCredentials) {
+      return Flowable.just(
+        ChildERC721.load(
+          contractAddress,
+          if (parent) web3jParent else web3j,
+          credentials,
+          CustomContractGasProvider()
+        )
       )
-    )
+    } else {
+      return Flowable.just(
+        ChildERC721.load(
+          contractAddress,
+          if (parent) web3jParent else web3j,
+          transactionManager,
+          CustomContractGasProvider()
+        )
+      )
+    }
   }
 
   fun loadRootChainContract(): Flowable<RootChain> {
-    return Flowable.just(
-      RootChain.load(
-        rootChainAddress,
-        web3jParent,
-        credentials,
-        CustomContractGasProvider()
+    if (isCredentials) {
+      return Flowable.just(
+        RootChain.load(
+          rootChainAddress,
+          web3jParent,
+          credentials,
+          CustomContractGasProvider()
+        )
       )
-    )
+    } else {
+      return Flowable.just(
+        RootChain.load(
+          rootChainAddress,
+          web3jParent,
+          transactionManager,
+          CustomContractGasProvider()
+        )
+      )
+    }
   }
 
   fun loadStandardTokenContract(
     contractAddress: String,
     parent: Boolean = false
   ): Flowable<StandardToken> {
-
-    return Flowable.just(
-      StandardToken.load(
-        contractAddress,
-        if (parent) web3jParent else web3j,
-        credentials,
-        CustomContractGasProvider()
+    if (isCredentials) {
+      return Flowable.just(
+        StandardToken.load(
+          contractAddress,
+          if (parent) web3jParent else web3j,
+          credentials,
+          CustomContractGasProvider()
+        )
       )
-    )
+    } else {
+      return Flowable.just(
+        StandardToken.load(
+          contractAddress,
+          if (parent) web3jParent else web3j,
+          transactionManager,
+          CustomContractGasProvider()
+        )
+      )
+    }
   }
 
   fun loadDepositMangerContract(): Flowable<DepositManager> {
-    return Flowable.just(
-      DepositManager.load(
-        depositManagerAddress,
-        web3jParent,
-        credentials,
-        CustomContractGasProvider()
+    if (isCredentials) {
+      return Flowable.just(
+        DepositManager.load(
+          depositManagerAddress,
+          web3jParent,
+          credentials,
+          CustomContractGasProvider()
+        )
       )
-    )
+    } else {
+      return Flowable.just(
+        DepositManager.load(
+          depositManagerAddress,
+          web3jParent,
+          transactionManager,
+          CustomContractGasProvider()
+        )
+      )
+    }
   }
 
   fun loadWithdrawMangerContract(): Flowable<WithdrawManager> {
-    return Flowable.just(
-      WithdrawManager.load(
-        withdrawManagerAddress,
-        web3jParent,
-        credentials,
-        CustomContractGasProvider()
+    if (isCredentials) {
+      return Flowable.just(
+        WithdrawManager.load(
+          withdrawManagerAddress,
+          web3jParent,
+          credentials,
+          CustomContractGasProvider()
+        )
       )
-    )
+    } else {
+      return Flowable.just(
+        WithdrawManager.load(
+          withdrawManagerAddress,
+          web3jParent,
+          transactionManager,
+          CustomContractGasProvider()
+        )
+      )
+    }
   }
 
   fun getEtherBalance() = web3jParent.ethGetBalance(
@@ -149,7 +217,7 @@ class Matic(networkConfig: NetworkConfig) {
      */
   }
 
-  fun depositEthers(amount: BigInteger) : Flowable<EthSendTransaction> {
+  fun depositEthers(amount: BigInteger): Flowable<EthSendTransaction> {
     return loadRootChainContract()
       .flatMapSingle {
         it.depositEthers(amount)
@@ -416,7 +484,13 @@ class Matic(networkConfig: NetworkConfig) {
 
   fun setWallet(privateKey: String) {
     credentials = Credentials.create(privateKey)
+    isCredentials = true
     fromAddress = credentials.address
+  }
+
+  fun setFromAddress(address: String) {
+    fromAddress = address
+    transactionManager = RawTransactionManager(web3j, fromAddress)
   }
 
   fun signAndSendRawTransaction(rawTransaction: RawTransaction, web3j: Web3j)
