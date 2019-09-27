@@ -29,9 +29,9 @@ import java.nio.ByteBuffer
 
 class Matic(networkConfig: NetworkConfig) {
   private lateinit var credentials: Credentials
-  private var isCredentials: Boolean = false
   private lateinit var fromAddress: String
   private lateinit var transactionManager: TransactionManager
+  private var isCredentials: Boolean = false
   private var web3j: Web3j = Web3j.build(HttpService(networkConfig.MATIC_PROVIDER))
   private var web3jParent: Web3j = Web3j.build(HttpService(networkConfig.PARENT_PROVIDER))
   private var rootChainAddress: String = networkConfig.ROOT_CONTRACT_ADDRESS
