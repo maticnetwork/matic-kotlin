@@ -5,11 +5,11 @@ import network.matic.sdk.Matic
 import java.math.BigInteger
 
 object WithdrawERC20 {
-  fun testWithdrawERC20() {
+  fun withdrawERC20Example() {
     val maticInstance = Matic(TestNet1())
-    maticInstance.setWallet(ConfigTest.PRIVATE_KEY)
+    maticInstance.setWallet(ConfigExample.PRIVATE_KEY)
     maticInstance.startWithdraw(
-      ConfigTest.MATIC_TEST_TOKEN,
+      ConfigExample.MATIC_TEST_TOKEN,
       BigInteger("100000000000000000")
     )
       .subscribeOn(Schedulers.io())

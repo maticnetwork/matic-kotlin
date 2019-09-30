@@ -1,13 +1,3 @@
 /build
-/bitcoinjcore/build
-/abi/build
-/codegen/build
-/compat/build
-/contracts/build
-/core/build
-/crypto/build
-/parity/build
-/rlp/build
-/tuples/build
-/utils/build
 .settings
+.classpath
