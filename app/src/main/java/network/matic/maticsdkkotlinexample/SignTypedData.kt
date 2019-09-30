@@ -4,7 +4,7 @@ import network.matic.sdk.Matic
 import java.io.BufferedReader
 
 object SignTypedData {
-  fun testSignTypedData() {
+  fun signTypedDataExample() {
     val maticInstance = Matic(TestNet1())
     maticInstance.setWallet(ConfigTest.PRIVATE_KEY)
     val jsonFilepath = "signTypedLogin.json"

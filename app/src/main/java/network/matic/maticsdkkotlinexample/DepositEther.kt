@@ -5,7 +5,7 @@ import network.matic.sdk.Matic
 import java.math.BigInteger
 
 object DepositEther {
-  fun testDepositEther() {
+  fun depositEtherExample() {
     val maticInstance = Matic(TestNet1())
     maticInstance.setWallet(ConfigTest.PRIVATE_KEY)
 

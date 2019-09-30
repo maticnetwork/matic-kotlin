@@ -5,7 +5,7 @@ import network.matic.sdk.Matic
 import java.math.BigInteger
 
 object WithdrawERC20 {
-  fun testWithdrawERC20() {
+  fun withdrawERC20Example() {
     val maticInstance = Matic(TestNet1())
     maticInstance.setWallet(ConfigTest.PRIVATE_KEY)
     maticInstance.startWithdraw(

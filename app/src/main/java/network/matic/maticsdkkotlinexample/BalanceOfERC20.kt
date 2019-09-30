@@ -5,7 +5,7 @@ import io.reactivex.schedulers.Schedulers
 import network.matic.sdk.Matic
 
 object BalanceOfERC20 {
-  fun testBalanceOfERC20() {
+  fun balanceOfERC20Example() {
     val userAddress = "0x7eD7f36694153bA6EfF6ca6726b60F6E2Bb17fcf"
     val maticInstance = Matic(TestNet1())
     maticInstance.setFromAddress(ConfigTest.FROM_ADDRESS)

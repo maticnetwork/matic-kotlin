@@ -6,7 +6,7 @@ import java.math.BigInteger
 
 object DepositERC20 {
 
-  fun testApproveERC20() {
+  fun approveERC20Example() {
     val maticInstance = Matic(TestNet1())
     maticInstance.setWallet(ConfigTest.PRIVATE_KEY)
 
@@ -22,7 +22,7 @@ object DepositERC20 {
       })
   }
 
-  fun testDepositERC20() {
+  fun depositERC20Example() {
     val maticInstance = Matic(TestNet1())
     maticInstance.setWallet(ConfigTest.PRIVATE_KEY)
 
