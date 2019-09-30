@@ -7,7 +7,7 @@ object WithdrawComplete {
   fun withdrawCompleteExample() {
     val maticInstance = Matic(TestNet1())
     val transactionHash = "0x733fb1835cf781f16b9914baa95449dac0394278670874abde8951a443d4ba41"
-    maticInstance.setWallet(ConfigTest.PRIVATE_KEY)
+    maticInstance.setWallet(ConfigExample.PRIVATE_KEY)
 
     maticInstance.withdraw(transactionHash)
       .subscribeOn(Schedulers.io())

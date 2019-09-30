@@ -43,8 +43,8 @@ class Matic(networkConfig: NetworkConfig) {
   private var watcherApiFactory = WatcherApiFactory(networkConfig)
 
   fun loadERC20Contract(contractAddress: String, parent: Boolean = false): Flowable<ChildERC20> {
-    if (isCredentials) {
-      return Flowable.just(
+    return when (isCredentials) {
+      true -> Flowable.just(
         ChildERC20.load(
           contractAddress,
           if (parent) web3jParent else web3j,
@@ -52,8 +52,7 @@ class Matic(networkConfig: NetworkConfig) {
           CustomContractGasProvider()
         )
       )
-    } else {
-      return Flowable.just(
+      false -> Flowable.just(
         ChildERC20.load(
           contractAddress,
           if (parent) web3jParent else web3j,
@@ -65,8 +64,8 @@ class Matic(networkConfig: NetworkConfig) {
   }
 
   fun loadERC721Contract(contractAddress: String, parent: Boolean = false): Flowable<ChildERC721> {
-    if (isCredentials) {
-      return Flowable.just(
+    return when (isCredentials) {
+      true -> Flowable.just(
         ChildERC721.load(
           contractAddress,
           if (parent) web3jParent else web3j,
@@ -74,8 +73,7 @@ class Matic(networkConfig: NetworkConfig) {
           CustomContractGasProvider()
         )
       )
-    } else {
-      return Flowable.just(
+      false -> Flowable.just(
         ChildERC721.load(
           contractAddress,
           if (parent) web3jParent else web3j,
@@ -87,8 +85,8 @@ class Matic(networkConfig: NetworkConfig) {
   }
 
   fun loadRootChainContract(): Flowable<RootChain> {
-    if (isCredentials) {
-      return Flowable.just(
+    return when (isCredentials) {
+      true -> Flowable.just(
         RootChain.load(
           rootChainAddress,
           web3jParent,
@@ -96,8 +94,7 @@ class Matic(networkConfig: NetworkConfig) {
           CustomContractGasProvider()
         )
       )
-    } else {
-      return Flowable.just(
+      false -> Flowable.just(
         RootChain.load(
           rootChainAddress,
           web3jParent,
@@ -112,8 +109,8 @@ class Matic(networkConfig: NetworkConfig) {
     contractAddress: String,
     parent: Boolean = false
   ): Flowable<StandardToken> {
-    if (isCredentials) {
-      return Flowable.just(
+    return when (isCredentials) {
+      true -> Flowable.just(
         StandardToken.load(
           contractAddress,
           if (parent) web3jParent else web3j,
@@ -121,8 +118,7 @@ class Matic(networkConfig: NetworkConfig) {
           CustomContractGasProvider()
         )
       )
-    } else {
-      return Flowable.just(
+      false -> Flowable.just(
         StandardToken.load(
           contractAddress,
           if (parent) web3jParent else web3j,
@@ -134,8 +130,8 @@ class Matic(networkConfig: NetworkConfig) {
   }
 
   fun loadDepositMangerContract(): Flowable<DepositManager> {
-    if (isCredentials) {
-      return Flowable.just(
+    return when (isCredentials) {
+      true -> Flowable.just(
         DepositManager.load(
           depositManagerAddress,
           web3jParent,
@@ -143,8 +139,7 @@ class Matic(networkConfig: NetworkConfig) {
           CustomContractGasProvider()
         )
       )
-    } else {
-      return Flowable.just(
+      false -> Flowable.just(
         DepositManager.load(
           depositManagerAddress,
           web3jParent,
@@ -156,8 +151,8 @@ class Matic(networkConfig: NetworkConfig) {
   }
 
   fun loadWithdrawMangerContract(): Flowable<WithdrawManager> {
-    if (isCredentials) {
-      return Flowable.just(
+    return when (isCredentials) {
+      true -> Flowable.just(
         WithdrawManager.load(
           withdrawManagerAddress,
           web3jParent,
@@ -165,8 +160,7 @@ class Matic(networkConfig: NetworkConfig) {
           CustomContractGasProvider()
         )
       )
-    } else {
-      return Flowable.just(
+      false -> Flowable.just(
         WithdrawManager.load(
           withdrawManagerAddress,
           web3jParent,
@@ -487,9 +481,12 @@ class Matic(networkConfig: NetworkConfig) {
     fromAddress = credentials.address
   }
 
-  fun setFromAddress(address: String) {
+  fun setFromAddress(address: String, parent: Boolean = false) {
     fromAddress = address
-    transactionManager = RawTransactionManager(web3j, fromAddress)
+    transactionManager = RawTransactionManager(
+      if (parent) web3jParent else web3j,
+      fromAddress
+    )
   }
 
   fun signAndSendRawTransaction(rawTransaction: RawTransaction, web3j: Web3j)

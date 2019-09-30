@@ -6,7 +6,7 @@ import java.io.BufferedReader
 object SignTypedData {
   fun signTypedDataExample() {
     val maticInstance = Matic(TestNet1())
-    maticInstance.setWallet(ConfigTest.PRIVATE_KEY)
+    maticInstance.setWallet(ConfigExample.PRIVATE_KEY)
     val jsonFilepath = "signTypedLogin.json"
     val loader = Thread.currentThread().contextClassLoader
     val datastream = loader.getResourceAsStream(jsonFilepath)
@@ -18,6 +18,7 @@ object SignTypedData {
     } finally {
       reader.close()
     }
+
     val signedData = maticInstance.signTypedData(content)
     println("signedData : $signedData")
   }
