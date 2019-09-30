@@ -25,4 +25,95 @@ We will be improving this library to make all features available like Plasma Fas
 	        implementation 'com.github.maticnetwork:matic-kotlin:1.0.0-beta-1'
 	}
 
- That's it! <br> 
+## Getting Started
+
+ ```java
+ // Import Matic SDK
+ import network.matic.sdk.Matic
+   
+// Setup Config Object by extending NetworkConfig
+data class TestNet1(
+  // Set Matic provider - string or provider instance
+  // Example: 'https://testnet.matic.network'
+  override var MATIC_PROVIDER: String = <rpc-url>,
+  
+  // Set Mainchain provider - string or provider instance
+  // Example: 'https://ropsten.infura.io'
+  override var PARENT_PROVIDER: String = <rpc-url>,
+  
+  // Set rootchain contract. See below for more information
+  override var ROOT_CONTRACT_ADDRESS: String = <root-contract-address>,
+  
+  // Set withdraw-manager Address. See below for more information
+  override var WITHDRAW_MANAGER_ADDRESS: String = <withdraw-manager-address>,
+  
+  // Set deposit-manager Address. See below for more information  
+  override var DEPOSIT_MANAGER_ADDRESS: String = <deposit-manager-address>,
+  
+  // Syncer API URL
+  // Fetches tx/receipt proof data instead of fetching whole block on client side
+  override var SYNCER_URL: String = "https://matic-syncer2.api.matic.network/api/v1",
+  
+  // Watcher API URL
+  // Fetches headerBlock info from mainchain & finds appropriate headerBlock for given blockNumber
+  override var WATCHER_URL: String = "https://ropsten-watcher2.api.matic.network/api/v1",
+  
+  // Set matic network's WETH address. See below for more information
+  override var MATIC_WETH_ADDRESS: String = <matic-weth-address>,
+
+  // Set WETH address on RootChain. See below for more information
+  override var ROOT_WETH_ADDRESS: String = <root-weth-address>
+) : NetworkConfig()
+
+// Create sdk instance
+val maticInstance = Matic(TestNet1())
+
+// Set wallet
+maticInstance.setWallet(ConfigExample.PRIVATE_KEY)
+
+// Set address
+maticInstance.setFromAddress(ConfigExample.FROM_ADDRESS, true)
+
+// get ERC20 token balance
+maticInstance.getERC20Balance(
+  ConfigExample.ROPSTEN_TEST_TOKEN, // User address
+  userAddress, // Token address
+  true // `Parent` must be boolean value. For token transfer on Main chain, use parent: true
+)
+
+// Deposit Ether into Matic chain
+ maticInstance.depositEthers(
+    BigInteger("3000000000000000000") // Amount
+  )
+
+// Approve ERC20 token for deposit
+  maticInstance.approveERC20TokensForDeposit(
+    ConfigExample.ROPSTEN_TEST_TOKEN,
+    BigInteger("10000000000000000000")
+  )
+
+// Deposit token into Matic chain. Remember to call `approveERC20TokensForDeposit` before
+maticInstance.depositERC20Tokens(
+  ConfigExample.ROPSTEN_TEST_TOKEN,
+  BigInteger("10000000000000000")
+)
+
+// Transfer token on Matic
+maticInstance.transferTokens(
+  recipientAddress,
+  ConfigExample.ROPSTEN_TEST_TOKEN,
+  BigInteger("1000000000000000"),
+  false
+)
+
+// Initiate withdrawal of ERC20 from Matic and retrieve the Transaction id
+maticInstance.startWithdraw(
+  ConfigExample.MATIC_TEST_TOKEN,
+  BigInteger("100000000000000000")
+)
+
+// Withdraw funds from the Matic chain using the Transaction id generated from the 'startWithdraw' method
+// after header has been submitted to mainchain
+maticInstance.withdraw(transactionHash)
+
+ ```
