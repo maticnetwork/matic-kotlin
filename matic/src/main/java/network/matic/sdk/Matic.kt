@@ -32,8 +32,8 @@ class Matic(networkConfig: NetworkConfig) {
   private lateinit var fromAddress: String
   private lateinit var transactionManager: TransactionManager
   private var isCredentials: Boolean = false
-  private var web3j: Web3j = Web3j.build(HttpService(networkConfig.MATIC_PROVIDER))
-  private var web3jParent: Web3j = Web3j.build(HttpService(networkConfig.PARENT_PROVIDER))
+  private var web3j: Web3j = getWeb3j(networkConfig.MATIC_PROVIDER)
+  private var web3jParent: Web3j = getWeb3j(networkConfig.PARENT_PROVIDER)
   private var rootChainAddress: String = networkConfig.ROOT_CONTRACT_ADDRESS
   private var rootWethAddress: String = networkConfig.ROOT_WETH_ADDRESS
   private var childWethAddress: String = networkConfig.MATIC_WETH_ADDRESS
@@ -511,6 +511,12 @@ class Matic(networkConfig: NetworkConfig) {
     sigBuffer.put(signature.v)
 
     return Numeric.toHexString(sigBuffer.array())
+  }
+
+  companion object{
+    fun getWeb3j(rpc: String) :Web3j {
+      return Web3j.build(HttpService(rpc))
+    }
   }
 }
 
