@@ -22,7 +22,7 @@ We will be improving this library to make all features available like Plasma Fas
   Add the dependency in your app module's build.gradle file
 
 	dependencies {
-	        implementation 'com.github.maticnetwork:matic-kotlin:1.0.0-beta-1'
+	        implementation 'com.github.maticnetwork:matic-kotlin:Tag'
 	}
 
 ## Getting Started
