@@ -503,6 +503,18 @@ class Matic(networkConfig: NetworkConfig) {
     return toRpcSig(sig)
   }
 
+  fun signMessage(msgParams: String) : String {
+    val msg = Numeric.hexStringToByteArray(msgParams)
+    val signedMsg = Sign.signMessage(msg, credentials.ecKeyPair, false)
+    return toRpcSig(signedMsg)
+  }
+
+  fun signPersonalMessage(msgParams: String) : String {
+    val msg = Numeric.hexStringToByteArray(msgParams)
+    val signedMsg = Sign.signPrefixedMessage(msg, credentials.ecKeyPair)
+    return toRpcSig(signedMsg)
+  }
+
   private fun toRpcSig(signature: Sign.SignatureData): String {
     // sign
     val sigBuffer = ByteBuffer.allocate(signature.r.size + signature.s.size + 1)
