@@ -74,6 +74,9 @@ maticInstance.setWallet(ConfigExample.PRIVATE_KEY)
 // Set address
 maticInstance.setFromAddress(ConfigExample.FROM_ADDRESS, true)
 
+// get web3 instance
+val web3 = Matic.getWeb3j(provider) // Provider Example: 'https://ropsten.infura.io'
+
 // get ERC20 token balance
 maticInstance.getERC20Balance(
   ConfigExample.ROPSTEN_TEST_TOKEN, // User address
