@@ -17,7 +17,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import network.matic.sdk.abi.datatypes.DynamicArray;
 import network.matic.sdk.abi.datatypes.DynamicBytes;
@@ -28,6 +27,7 @@ import network.matic.sdk.abi.datatypes.Type;
 import network.matic.sdk.abi.datatypes.Ufixed;
 import network.matic.sdk.abi.datatypes.Uint;
 import network.matic.sdk.abi.datatypes.Utf8String;
+import network.matic.sdk.compat.Compat;
 
 
 /**
@@ -46,7 +46,7 @@ public class Utils {
                 type = (Class<?>) ((ParameterizedType) reflectedType).getRawType();
                 return getParameterizedTypeName(typeReference, type);
             } else {
-                type = Class.forName(reflectedType.getTypeName());
+                type = Class.forName(Compat.getTypeName(reflectedType));
                 return getSimpleTypeName(type);
             }
         } catch (ClassNotFoundException e) {
@@ -95,24 +95,23 @@ public class Utils {
     }
 
     @SuppressWarnings("unchecked")
-    static <T extends Type> Class<T> getParameterizedTypeFromArray(TypeReference typeReference)
-            throws ClassNotFoundException {
+    static <T extends Type> Class<T> getParameterizedTypeFromArray(
+            TypeReference typeReference) throws ClassNotFoundException {
 
         java.lang.reflect.Type type = typeReference.getType();
         java.lang.reflect.Type[] typeArguments =
                 ((ParameterizedType) type).getActualTypeArguments();
 
-        String parameterizedTypeName = typeArguments[0].getTypeName();
+        String parameterizedTypeName = Compat.getTypeName(typeArguments[0]);
         return (Class<T>) Class.forName(parameterizedTypeName);
     }
 
     @SuppressWarnings("unchecked")
     public static List<TypeReference<Type>> convert(List<TypeReference<?>> input) {
         List<TypeReference<Type>> result = new ArrayList<>(input.size());
-        result.addAll(
-                input.stream()
-                        .map(typeReference -> (TypeReference<Type>) typeReference)
-                        .collect(Collectors.toList()));
+        for (TypeReference<?> ref : input) {
+            result.add((TypeReference<Type>) ref);
+        }
         return result;
     }
 
