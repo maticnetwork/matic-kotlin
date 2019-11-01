@@ -171,8 +171,8 @@ class Matic(networkConfig: NetworkConfig) {
     }
   }
 
-  fun getEtherBalance() = web3jParent.ethGetBalance(
-    fromAddress,
+  fun getEtherBalance(userAddress: String) = web3jParent.ethGetBalance(
+    userAddress,
     DefaultBlockParameterName.LATEST
   ).flowable()
 
